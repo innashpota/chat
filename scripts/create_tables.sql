@@ -3,10 +3,9 @@ CREATE TABLE users(
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(20) NOT NULL,
     login VARCHAR(20) NOT NULL,
-    password VARCHAR(10) NOT NULL,
+    password VARCHAR(20) NOT NULL,
     CONSTRAINT users_login_uk UNIQUE (login)
 );
-
 
 CREATE TABLE message(
     message_id SERIAL PRIMARY KEY,
