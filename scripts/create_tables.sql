@@ -1,3 +1,6 @@
+DROP TABLE IF EXISTS message;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE users(
     user_id SERIAL PRIMARY KEY,
     first_name VARCHAR(20) NOT NULL,

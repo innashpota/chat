@@ -6,3 +6,5 @@
 chat.iml
 .idea/
 build/
+
+scripts/data.sql
