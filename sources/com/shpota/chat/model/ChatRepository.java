@@ -1,7 +1,4 @@
-package com.shpota.chat.model.jdbc;
-
-import com.shpota.chat.model.Message;
-import com.shpota.chat.model.User;
+package com.shpota.chat.model;
 
 import java.util.List;
 
@@ -14,6 +11,10 @@ public interface ChatRepository {
     void updateUser(int userId, User user);
 
     User loginUser(String login, String password);
+
+    User getUser(int userId);
+
+    List<User> getAllUsers();
 
     void addMessage(Message message);
 
