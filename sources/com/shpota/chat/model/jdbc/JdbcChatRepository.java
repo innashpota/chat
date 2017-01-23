@@ -20,6 +20,10 @@ public class JdbcChatRepository implements ChatRepository {
     private static final String SQL_DELETE_USER =
             "DELETE FROM users WHERE user_id = ?;";
 
+    private static final String SQL_SELECT_USER =
+            "SELECT first_name,last_name, login, password FROM users " +
+                    "WHERE user_id = ?;";
+
 
     private ConnectionManager connectionManager = new ConnectionManager();
 
@@ -35,7 +39,7 @@ public class JdbcChatRepository implements ChatRepository {
             addStatement.executeUpdate();
             try (ResultSet resultSet = addStatement.getGeneratedKeys()) {
                 int id = -1;
-                if(resultSet.next()){
+                if (resultSet.next()) {
                     id = resultSet.getInt("user_id");
                 }
                 return id;
@@ -79,7 +83,25 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public User getUser(int userId) {
-        return null;
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement selectStatement = connection.prepareStatement(SQL_SELECT_USER)) {
+            selectStatement.setInt(1, userId);
+            try (ResultSet resultSet = selectStatement.executeQuery()){
+                User user = null;
+                if(resultSet.next()){
+                    user = new User(
+                            userId,
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            resultSet.getString("login"),
+                            resultSet.getString("password")
+                    );
+                }
+                return user;
+            }
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
     }
 
     @Override
