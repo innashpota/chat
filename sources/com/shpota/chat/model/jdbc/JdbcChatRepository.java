@@ -13,11 +13,8 @@ public class JdbcChatRepository implements ChatRepository {
             "INSERT INTO users (first_name, last_name, login, password) " +
                     "VALUES (?, ?, ?, ?);";
 
-    private static final String SQL_SELECT_USER_ID =
-            "SELECT user_id FROM users WHERE login = ?;";
-
     private static final String SQL_UPDATE_USER =
-            "UPDATE users SET first_name = ?, last_name = ?, login = ?, password = ?" +
+            "UPDATE users SET first_name = ?, last_name = ?, password = ?" +
                     "WHERE user_id = ?;";
 
     private static final String SQL_DELETE_USER =
@@ -29,29 +26,30 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public int addUser(User user) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement preparedStatement =
+             PreparedStatement addStatement =
                      connection.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, user.getFirstName());
-            preparedStatement.setString(2, user.getLastName());
-            preparedStatement.setString(3, user.getLogin());
-            preparedStatement.setString(4, user.getPassword());
-            preparedStatement.executeUpdate();
-            try (ResultSet resultSet = preparedStatement.getGeneratedKeys()) {
-                if (resultSet.next()) {
-                    user.setId(resultSet.getInt("user_id"));
+            addStatement.setString(1, user.getFirstName());
+            addStatement.setString(2, user.getLastName());
+            addStatement.setString(3, user.getLogin());
+            addStatement.setString(4, user.getPassword());
+            addStatement.executeUpdate();
+            try (ResultSet resultSet = addStatement.getGeneratedKeys()) {
+                int id = -1;
+                if(resultSet.next()){
+                    id = resultSet.getInt("user_id");
                 }
+                return id;
             }
         } catch (SQLException e) {
             throw new RepositoryException(e);
         }
-
-        return user.getId();
     }
 
     @Override
     public void deleteUser(int userId) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement deleteStatement = connection.prepareStatement(SQL_DELETE_USER)) {
+             PreparedStatement deleteStatement =
+                     connection.prepareStatement(SQL_DELETE_USER)) {
             deleteStatement.setInt(1, userId);
             deleteStatement.executeUpdate();
         } catch (SQLException e) {
@@ -61,7 +59,17 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public void updateUser(int userId, User user) {
-
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement updateStatement =
+                     connection.prepareStatement(SQL_UPDATE_USER)) {
+            updateStatement.setString(1, user.getFirstName());
+            updateStatement.setString(2, user.getLastName());
+            updateStatement.setString(3, user.getPassword());
+            updateStatement.setInt(4, userId);
+            updateStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
     }
 
     @Override

@@ -9,8 +9,9 @@ public class Application {
 
         JdbcChatRepository jdbcChatRepository = new JdbcChatRepository();
         System.out.println(
-                jdbcChatRepository.addUser(new User("User", "User", "user", "1"))
+                jdbcChatRepository.addUser(new User("Us", "Us", "us", "1"))
         );
-        //jdbcChatRepository.deleteUser(7);
+        //jdbcChatRepository.deleteUser(18);
+        //jdbcChatRepository.updateUser(16, new User("New user", "User", "user", "1"));
     }
 }
