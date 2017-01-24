@@ -14,15 +14,23 @@ public class JdbcChatRepository implements ChatRepository {
                     "VALUES (?, ?, ?, ?);";
 
     private static final String SQL_UPDATE_USER =
-            "UPDATE users SET first_name = ?, last_name = ?, password = ?" +
+            "UPDATE users " +
+                    "SET first_name = ?, last_name = ?, password = ?" +
                     "WHERE user_id = ?;";
 
     private static final String SQL_DELETE_USER =
-            "DELETE FROM users WHERE user_id = ?;";
+            "DELETE FROM users " +
+                    "WHERE user_id = ?;";
 
     private static final String SQL_SELECT_USER =
-            "SELECT first_name,last_name, login, password FROM users " +
+            "SELECT first_name,last_name, login, password " +
+                    "FROM users " +
                     "WHERE user_id = ?;";
+
+    private static final String SQL_SELECT_LOGIN_USER =
+            "SELECT user_id, first_name, last_name " +
+                    "FROM users " +
+                    "WHERE login = ? AND password = ?;";
 
 
     private ConnectionManager connectionManager = new ConnectionManager();
@@ -78,7 +86,27 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public User loginUser(String login, String password) {
-        return null;
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement loginStatement =
+                     connection.prepareStatement(SQL_SELECT_LOGIN_USER)) {
+            loginStatement.setString(1, login);
+            loginStatement.setString(2, password);
+            try (ResultSet resultSet = loginStatement.executeQuery()){
+                User user = null;
+                if (resultSet.next()) {
+                    user = new User(
+                            resultSet.getInt("user_id"),
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            login,
+                            password
+                    );
+                }
+                return user;
+            }
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
     }
 
     @Override
@@ -86,9 +114,9 @@ public class JdbcChatRepository implements ChatRepository {
         try (Connection connection = connectionManager.openConnection();
              PreparedStatement selectStatement = connection.prepareStatement(SQL_SELECT_USER)) {
             selectStatement.setInt(1, userId);
-            try (ResultSet resultSet = selectStatement.executeQuery()){
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
                 User user = null;
-                if(resultSet.next()){
+                if (resultSet.next()) {
                     user = new User(
                             userId,
                             resultSet.getString("first_name"),

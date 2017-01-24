@@ -13,8 +13,11 @@ public class Application {
         );*/
         //jdbcChatRepository.deleteUser(18);
         //jdbcChatRepository.updateUser(16, new User("New user", "User", "user", "1"));
-        System.out.println(
+        /*System.out.println(
                 jdbcChatRepository.getUser(3)
+        );*/
+        System.out.println(
+                jdbcChatRepository.loginUser("kornev", "1")
         );
     }
 }
