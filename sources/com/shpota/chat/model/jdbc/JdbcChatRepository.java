@@ -6,6 +6,7 @@ import com.shpota.chat.model.User;
 import com.shpota.chat.model.exceptions.RepositoryException;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcChatRepository implements ChatRepository {
@@ -32,6 +33,20 @@ public class JdbcChatRepository implements ChatRepository {
                     "FROM users " +
                     "WHERE login = ? AND password = ?;";
 
+    private static final String SQL_SELECT_ALL_USERS =
+            "SELECT * " +
+                    "FROM users " +
+                    "ORDER BY user_id;";
+
+    private static final String SQL_ADD_MESSAGE =
+            "INSERT INTO message (author_id, destination_id, posted_date, message_text) " +
+                    "VALUES (?, ?, ?, ?');";
+
+    private static final String SQL_SELECT_ALL_MESSAGE =
+            "SELECT * " +
+                    "FROM message " +
+                    "WHERE author_id = ? and destination_id = ? " +
+                    "ORDER BY posted_date;";
 
     private ConnectionManager connectionManager = new ConnectionManager();
 
@@ -91,7 +106,7 @@ public class JdbcChatRepository implements ChatRepository {
                      connection.prepareStatement(SQL_SELECT_LOGIN_USER)) {
             loginStatement.setString(1, login);
             loginStatement.setString(2, password);
-            try (ResultSet resultSet = loginStatement.executeQuery()){
+            try (ResultSet resultSet = loginStatement.executeQuery()) {
                 User user = null;
                 if (resultSet.next()) {
                     user = new User(
@@ -134,7 +149,25 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public List<User> getAllUsers() {
-        return null;
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement allUsersStatement =
+                     connection.prepareStatement(SQL_SELECT_ALL_USERS)) {
+            try (ResultSet resultSet = allUsersStatement.executeQuery()) {
+                List<User> usersList = new ArrayList();
+                while (resultSet.next()) {
+                    usersList.add(new User(
+                            resultSet.getInt("user_id"),
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            resultSet.getString("login"),
+                            resultSet.getString("password")
+                    ));
+                }
+                return usersList;
+            }
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
     }
 
     @Override
