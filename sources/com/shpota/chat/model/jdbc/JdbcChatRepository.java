@@ -6,6 +6,7 @@ import com.shpota.chat.model.User;
 import com.shpota.chat.model.exceptions.RepositoryException;
 
 import java.sql.*;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class JdbcChatRepository implements ChatRepository {
 
     private static final String SQL_ADD_MESSAGE =
             "INSERT INTO message (author_id, destination_id, posted_date, message_text) " +
-                    "VALUES (?, ?, ?, ?');";
+                    "VALUES (?, ?, ?, ?);";
 
     private static final String SQL_SELECT_ALL_MESSAGE =
             "SELECT * " +
@@ -172,11 +173,41 @@ public class JdbcChatRepository implements ChatRepository {
 
     @Override
     public void addMessage(Message message) {
-
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement addMessageStatement =
+                     connection.prepareStatement(SQL_ADD_MESSAGE)) {
+            addMessageStatement.setInt(1, message.getAuthorID());
+            addMessageStatement.setInt(2, message.getDestinationID());
+            //addMessageStatement.setInt(3, message.getPostedDate());
+            addMessageStatement.setString(4, message.getMessage());
+            addMessageStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
     }
 
     @Override
     public List<Message> getMessages(int firstId, int secondId) {
-        return null;
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement allMessageStatement =
+                     connection.prepareStatement(SQL_ADD_MESSAGE)) {
+            allMessageStatement.setInt(1, firstId);
+            allMessageStatement.setInt(2, secondId);
+            try (ResultSet resultSet = allMessageStatement.executeQuery()) {
+                List<Message> messageList = new ArrayList();
+                while (resultSet.next()) {
+                    /*messageList.add(new Message(
+                            resultSet.getInt("message_id"),
+                            resultSet.getInt("author_id"),
+                            resultSet.getInt("destination_id"),
+                            resultSet.getDate("posted_date"),
+                            resultSet.getString("message_text")
+                    ));*/
+                }
+                return messageList;
+            }
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
     }
 }
