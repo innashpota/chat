@@ -1,15 +1,15 @@
 package com.shpota.chat.model;
 
-import java.time.ZonedDateTime;
+import java.time.OffsetDateTime;
 
 public class Message {
     private int messageId;
     private int authorID;
     private int destinationID;
-    private ZonedDateTime postedDate;
+    private OffsetDateTime postedDate;
     private String message;
 
-    public Message(int messageId, int authorID, int destinationID, ZonedDateTime postedDate, String message) {
+    public Message(int messageId, int authorID, int destinationID, OffsetDateTime postedDate, String message) {
         this(authorID, destinationID, postedDate, message);
 
         if (messageId <= 0) {
@@ -18,7 +18,7 @@ public class Message {
         this.messageId = messageId;
     }
 
-    public Message(int authorID, int destinationID, ZonedDateTime postedDate, String message) {
+    public Message(int authorID, int destinationID, OffsetDateTime postedDate, String message) {
         if (authorID <= 0 || destinationID <= 0 || postedDate == null || message == null) {
             throw new IllegalArgumentException(
                     "Author, destination, date and message must not be null."
@@ -56,14 +56,14 @@ public class Message {
         return destinationID;
     }
 
-    public void setPostedDate(ZonedDateTime postedDate) {
+    public void setPostedDate(OffsetDateTime postedDate) {
         if (postedDate == null) {
             throw new IllegalArgumentException("Date must not be null.");
         }
         this.postedDate = postedDate;
     }
 
-    public ZonedDateTime getPostedDate() {
+    public OffsetDateTime getPostedDate() {
         return postedDate;
     }
 

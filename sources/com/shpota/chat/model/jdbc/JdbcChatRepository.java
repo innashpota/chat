@@ -6,6 +6,8 @@ import com.shpota.chat.model.User;
 import com.shpota.chat.model.exceptions.RepositoryException;
 
 import java.sql.*;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +48,8 @@ public class JdbcChatRepository implements ChatRepository {
     private static final String SQL_SELECT_ALL_MESSAGE =
             "SELECT * " +
                     "FROM message " +
-                    "WHERE author_id = ? and destination_id = ? " +
+                    "WHERE author_id = ? AND destination_id = ? " +
+                    "OR author_id = ? AND destination_id = ?" +
                     "ORDER BY posted_date;";
 
     private ConnectionManager connectionManager = new ConnectionManager();
@@ -154,7 +157,7 @@ public class JdbcChatRepository implements ChatRepository {
              PreparedStatement allUsersStatement =
                      connection.prepareStatement(SQL_SELECT_ALL_USERS)) {
             try (ResultSet resultSet = allUsersStatement.executeQuery()) {
-                List<User> usersList = new ArrayList();
+                List<User> usersList = new ArrayList<>();
                 while (resultSet.next()) {
                     usersList.add(new User(
                             resultSet.getInt("user_id"),
@@ -178,7 +181,7 @@ public class JdbcChatRepository implements ChatRepository {
                      connection.prepareStatement(SQL_ADD_MESSAGE)) {
             addMessageStatement.setInt(1, message.getAuthorID());
             addMessageStatement.setInt(2, message.getDestinationID());
-            //addMessageStatement.setInt(3, message.getPostedDate());
+            addMessageStatement.setObject(3, message.getPostedDate());
             addMessageStatement.setString(4, message.getMessage());
             addMessageStatement.executeUpdate();
         } catch (SQLException e) {
@@ -190,19 +193,24 @@ public class JdbcChatRepository implements ChatRepository {
     public List<Message> getMessages(int firstId, int secondId) {
         try (Connection connection = connectionManager.openConnection();
              PreparedStatement allMessageStatement =
-                     connection.prepareStatement(SQL_ADD_MESSAGE)) {
+                     connection.prepareStatement(SQL_SELECT_ALL_MESSAGE)) {
             allMessageStatement.setInt(1, firstId);
             allMessageStatement.setInt(2, secondId);
+            allMessageStatement.setInt(3, secondId);
+            allMessageStatement.setInt(4, firstId);
             try (ResultSet resultSet = allMessageStatement.executeQuery()) {
-                List<Message> messageList = new ArrayList();
+                List<Message> messageList = new ArrayList<>();
                 while (resultSet.next()) {
-                    /*messageList.add(new Message(
+                    OffsetDateTime postedDate = resultSet.getObject(
+                            "posted_date", OffsetDateTime.class
+                    );
+                    messageList.add(new Message(
                             resultSet.getInt("message_id"),
                             resultSet.getInt("author_id"),
                             resultSet.getInt("destination_id"),
-                            resultSet.getDate("posted_date"),
+                            postedDate,
                             resultSet.getString("message_text")
-                    ));*/
+                    ));
                 }
                 return messageList;
             }
