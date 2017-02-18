@@ -41,6 +41,11 @@ public class JdbcChatRepository implements ChatRepository {
                     "FROM users " +
                     "ORDER BY user_id;";
 
+    private static final String SQL_SELECT_USER_BY_LOGIN =
+            "SELECT login " +
+                    "FROM users " +
+                    "WHERE login = ?;";
+
     private static final String SQL_ADD_MESSAGE =
             "INSERT INTO message (author_id, destination_id, posted_date, message_text) " +
                     "VALUES (?, ?, ?, ?);";
@@ -58,7 +63,10 @@ public class JdbcChatRepository implements ChatRepository {
     public int addUser(User user) {
         try (Connection connection = connectionManager.openConnection();
              PreparedStatement addStatement =
-                     connection.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
+                     connection.prepareStatement(
+                             SQL_INSERT_USER,
+                             Statement.RETURN_GENERATED_KEYS
+                     )) {
             addStatement.setString(1, user.getFirstName());
             addStatement.setString(2, user.getLastName());
             addStatement.setString(3, user.getLogin());
@@ -131,7 +139,9 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public User getUser(int userId) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement selectStatement = connection.prepareStatement(SQL_SELECT_USER)) {
+             PreparedStatement selectStatement = connection.prepareStatement(
+                     SQL_SELECT_USER
+             )) {
             selectStatement.setInt(1, userId);
             try (ResultSet resultSet = selectStatement.executeQuery()) {
                 User user = null;
@@ -168,6 +178,24 @@ public class JdbcChatRepository implements ChatRepository {
                     ));
                 }
                 return usersList;
+            }
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
+    public String getUserByLogin(String login) {
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement getUserByLoginStatement =
+                     connection.prepareStatement(SQL_SELECT_USER_BY_LOGIN)) {
+            getUserByLoginStatement.setString(1, login);
+            try (ResultSet resultSet = getUserByLoginStatement.executeQuery()){
+                String userLogin = null;
+                while (resultSet.next()) {
+                    userLogin = resultSet.getString("login");
+                }
+                return userLogin;
             }
         } catch (SQLException e) {
             throw new RepositoryException(e);
