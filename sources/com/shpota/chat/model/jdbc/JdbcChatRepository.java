@@ -7,8 +7,6 @@ import com.shpota.chat.model.exceptions.RepositoryException;
 
 import java.sql.*;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -185,17 +183,23 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
-    public String getUserByLogin(String login) {
+    public User getUserByLogin(String login) {
         try (Connection connection = connectionManager.openConnection();
              PreparedStatement getUserByLoginStatement =
                      connection.prepareStatement(SQL_SELECT_USER_BY_LOGIN)) {
             getUserByLoginStatement.setString(1, login);
-            try (ResultSet resultSet = getUserByLoginStatement.executeQuery()){
-                String userLogin = null;
+            try (ResultSet resultSet = getUserByLoginStatement.executeQuery()) {
+                User user = null;
                 while (resultSet.next()) {
-                    userLogin = resultSet.getString("login");
+                    user = new User(
+                            resultSet.getInt("user_id"),
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            login,
+                            resultSet.getString("password")
+                    );
                 }
-                return userLogin;
+                return user;
             }
         } catch (SQLException e) {
             throw new RepositoryException(e);

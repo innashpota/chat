@@ -1,6 +1,5 @@
 package com.shpota.chat.model.net;
 
-import com.shpota.chat.model.packages.ClientLoginPackage;
 import com.shpota.chat.model.packages.ClientRegistrationPackage;
 import com.shpota.chat.model.packages.ServerAllUsersPackage;
 import com.shpota.chat.model.packages.ServerErrorPackage;

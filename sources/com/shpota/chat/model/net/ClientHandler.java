@@ -2,7 +2,7 @@ package com.shpota.chat.model.net;
 
 import com.shpota.chat.model.ChatRepository;
 import com.shpota.chat.model.packages.ClientLoginPackage;
-import com.shpota.chat.model.packages.ClientMessagePackage;
+import com.shpota.chat.model.packages.ClientAddMessagePackage;
 import com.shpota.chat.model.packages.ClientRegistrationPackage;
 import com.shpota.chat.model.strategies.LoginStrategy;
 import com.shpota.chat.model.strategies.RegistrationStrategy;
@@ -41,8 +41,8 @@ public class ClientHandler extends Thread {
                         ClientLoginPackage login = (ClientLoginPackage) object;
                         LoginStrategy loginStrategy = new LoginStrategy(chatRepository);
                         outputStream.writeObject(loginStrategy.handle(login));
-                    } else if (object instanceof ClientMessagePackage) {
-                        ClientMessagePackage message = (ClientMessagePackage) object;
+                    } else if (object instanceof ClientAddMessagePackage) {
+                        ClientAddMessagePackage message = (ClientAddMessagePackage) object;
                         outputStream.writeObject(
                                 "Message: " + message.getMessage()
                         );

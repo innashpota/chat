@@ -7,7 +7,6 @@ import java.util.List;
 public class ServerAllUsersPackage extends Package {
     private final List<User> allUsers;
 
-
     public ServerAllUsersPackage(List<User> allUsers) {
         this.allUsers = allUsers;
     }

@@ -14,18 +14,25 @@ public class RegistrationStrategy implements Strategy<ClientRegistrationPackage>
         this.chatRepository = chatRepository;
     }
 
-
     @Override
     public Package handle(ClientRegistrationPackage pkg) {
-        if (chatRepository.getUserByLogin(pkg.getLogin()) == null) {
+        User sender = getSenderMessage(pkg);
+        if (sender == null) {
             chatRepository.addUser(new User(
                     pkg.getFirstName(),
                     pkg.getLastName(),
                     pkg.getLogin(),
                     pkg.getPassword()
             ));
-            return new ServerAllUsersPackage(chatRepository.getAllUsers());
+            ServerAllUsersPackage allUsersPackage =
+                    new ServerAllUsersPackage(chatRepository.getAllUsers());
+            allUsersPackage.setAuthorId(sender.getId());
+            return allUsersPackage;
         }
         return new ServerErrorPackage("User with this login already exists");
+    }
+
+    private User getSenderMessage(ClientRegistrationPackage pkg) {
+        return chatRepository.getUserByLogin(pkg.getLogin());
     }
 }
