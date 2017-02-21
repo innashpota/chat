@@ -1,8 +1,8 @@
 package com.shpota.chat.model.net;
 
-import com.shpota.chat.model.packages.ClientRegistrationPackage;
-import com.shpota.chat.model.packages.ServerAllUsersPackage;
-import com.shpota.chat.model.packages.ServerErrorPackage;
+import com.shpota.chat.model.packages.LoginClientPackage;
+import com.shpota.chat.model.packages.AllUsersServerPackage;
+import com.shpota.chat.model.packages.ErrorServerPackage;
 
 import java.net.*;
 import java.io.*;
@@ -10,7 +10,6 @@ import java.io.*;
 public class Client {
     private static final int SERVER_PORT = 65000;
     private static final String ADDRESS = "192.168.1.102";
-
 
     public static void main(String[] args) throws UnknownHostException {
         InetAddress ipAddress = InetAddress.getByName(ADDRESS);
@@ -35,25 +34,25 @@ public class Client {
 
             while (true) {
                 String login = bufferedReader.readLine();
-                /*objectOutputStream.writeObject(
-                        new ClientLoginPackage(login, "1")
-                );*/
                 objectOutputStream.writeObject(
-                        new ClientRegistrationPackage(
+                        new LoginClientPackage(login, "1")
+                );
+                /*objectOutputStream.writeObject(
+                        new RegistrationClientPackage(
                                 "Vasay",
                                 "Pupkin",
                                 login,
                                 "1")
-                );
+                );*/
                 objectOutputStream.flush();
                 Object readObject = objectInputStream.readObject();
-                if (readObject instanceof ServerAllUsersPackage) {
-                    ServerAllUsersPackage usersPackage =
-                            (ServerAllUsersPackage) readObject;
+                if (readObject instanceof AllUsersServerPackage) {
+                    AllUsersServerPackage usersPackage =
+                            (AllUsersServerPackage) readObject;
                     System.out.println(usersPackage.toString());
-                } else if (readObject instanceof ServerErrorPackage) {
-                    ServerErrorPackage errorPackage =
-                            (ServerErrorPackage) readObject;
+                } else if (readObject instanceof ErrorServerPackage) {
+                    ErrorServerPackage errorPackage =
+                            (ErrorServerPackage) readObject;
                     System.out.println(errorPackage.getDescription());
                 }
                 Thread.sleep(2000);

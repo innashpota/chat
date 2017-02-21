@@ -2,32 +2,31 @@ package com.shpota.chat.model.packages;
 
 import java.time.OffsetDateTime;
 
-public class ClientAddMessagePackage extends Package {
-    private final int authorID;
-    private final int destinationID;
+public class AddMessageClientPackage extends Package {
+    private final int authorId;
+    private final int destinationId;
     private final OffsetDateTime postedDate;
     private final String message;
 
-    public ClientAddMessagePackage(
-            int authorID,
-            int destinationID,
+    public AddMessageClientPackage(
+            int authorId,
+            int destinationId,
             OffsetDateTime postedDate,
             String message
     ) {
-        this.authorID = authorID;
-        this.destinationID = destinationID;
+        this.authorId = authorId;
+        this.destinationId = destinationId;
         this.postedDate = postedDate;
         this.message = message;
     }
 
-    public int getAuthorID() {
-        return authorID;
+    public int getAuthorId() {
+        return authorId;
     }
 
-    public int getDestinationID() {
-        return destinationID;
+    public int getDestinationId() {
+        return destinationId;
     }
-
 
     public OffsetDateTime getPostedDate() {
         return postedDate;

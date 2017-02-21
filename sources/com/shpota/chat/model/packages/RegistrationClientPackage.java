@@ -1,12 +1,12 @@
 package com.shpota.chat.model.packages;
 
-public class ClientRegistrationPackage extends Package {
+public class RegistrationClientPackage extends Package {
     private final String firstName;
     private final String lastName;
     private final String login;
     private final String password;
 
-    public ClientRegistrationPackage(
+    public RegistrationClientPackage(
             String firstName,
             String lastName,
             String login,

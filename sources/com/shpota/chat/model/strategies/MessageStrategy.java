@@ -2,11 +2,11 @@ package com.shpota.chat.model.strategies;
 
 import com.shpota.chat.model.ChatRepository;
 import com.shpota.chat.model.Message;
-import com.shpota.chat.model.packages.ClientAddMessagePackage;
+import com.shpota.chat.model.packages.AddMessageClientPackage;
+import com.shpota.chat.model.packages.MessageServerPackage;
 import com.shpota.chat.model.packages.Package;
-import com.shpota.chat.model.packages.ServerMessagePackage;
 
-public class MessageStrategy implements Strategy<ClientAddMessagePackage> {
+public class MessageStrategy implements Strategy<AddMessageClientPackage> {
     private final ChatRepository chatRepository;
 
     public MessageStrategy(ChatRepository chatRepository) {
@@ -14,17 +14,16 @@ public class MessageStrategy implements Strategy<ClientAddMessagePackage> {
     }
 
     @Override
-    public Package handle(ClientAddMessagePackage pkg) {
+    public Package handle(AddMessageClientPackage pkg) {
         chatRepository.addMessage(new Message(
-                pkg.getAuthorID(),
-                pkg.getDestinationID(),
+                pkg.getAuthorId(),
+                pkg.getDestinationId(),
                 pkg.getPostedDate(),
                 pkg.getMessage()
         ));
-        return new ServerMessagePackage(
-                chatRepository.getMessages(
-                        pkg.getAuthorId(),
-                        pkg.getDestinationID())
+        return new MessageServerPackage(chatRepository.getMessages(
+                pkg.getAuthorId(),
+                pkg.getDestinationId())
         );
     }
 }

@@ -4,10 +4,10 @@ import com.shpota.chat.model.Message;
 
 import java.util.List;
 
-public class ServerMessagePackage extends Package{
+public class MessageServerPackage extends Package {
     private final List<Message> messages;
 
-    public ServerMessagePackage(List<Message> messages) {
+    public MessageServerPackage(List<Message> messages) {
         this.messages = messages;
     }
 
@@ -17,7 +17,7 @@ public class ServerMessagePackage extends Package{
 
     @Override
     public String toString() {
-        return "ServerMessagePackage{" +
+        return "MessageServerPackage{" +
                 "messages=" + messages +
                 '}';
     }

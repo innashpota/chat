@@ -2,12 +2,14 @@ package com.shpota.chat.model.strategies;
 
 import com.shpota.chat.model.ChatRepository;
 import com.shpota.chat.model.User;
-import com.shpota.chat.model.packages.ClientLoginPackage;
+import com.shpota.chat.model.packages.AllUsersServerPackage;
+import com.shpota.chat.model.packages.LoginClientPackage;
 import com.shpota.chat.model.packages.Package;
-import com.shpota.chat.model.packages.ServerAllUsersPackage;
-import com.shpota.chat.model.packages.ServerErrorPackage;
+import com.shpota.chat.model.packages.ErrorServerPackage;
 
-public class LoginStrategy implements Strategy<ClientLoginPackage> {
+import java.util.List;
+
+public class LoginStrategy implements Strategy<LoginClientPackage> {
     private final ChatRepository chatRepository;
 
     public LoginStrategy(ChatRepository chatRepository) {
@@ -15,19 +17,17 @@ public class LoginStrategy implements Strategy<ClientLoginPackage> {
     }
 
     @Override
-    public Package handle(ClientLoginPackage pkg) {
-        if (chatRepository.loginUser(pkg.getLogin(), pkg.getPassword()) != null) {
-            ServerAllUsersPackage allUsersPackage =
-                    new ServerAllUsersPackage(chatRepository.getAllUsers());
-            allUsersPackage.setAuthorId(getSenderMessage(pkg).getId());
-            return allUsersPackage;
-        }
-        return new ServerErrorPackage(
-                "User with that login and /or password does not exist"
-        );
-    }
+    public Package handle(LoginClientPackage pkg) {
+        String login = pkg.getLogin();
+        String password = pkg.getPassword();
 
-    private User getSenderMessage(ClientLoginPackage pkg) {
-        return chatRepository.getUserByLogin(pkg.getLogin());
+        if (chatRepository.loginUser(login, password) != null) {
+            List<User> users = chatRepository.getAllUsers();
+
+            return new AllUsersServerPackage(users);
+        }
+        return new ErrorServerPackage(
+                "The login or password you entered is incorrect"
+        );
     }
 }

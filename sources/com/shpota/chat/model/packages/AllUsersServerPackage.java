@@ -4,10 +4,10 @@ import com.shpota.chat.model.User;
 
 import java.util.List;
 
-public class ServerAllUsersPackage extends Package {
+public class AllUsersServerPackage extends Package {
     private final List<User> allUsers;
 
-    public ServerAllUsersPackage(List<User> allUsers) {
+    public AllUsersServerPackage(List<User> allUsers) {
         this.allUsers = allUsers;
     }
 
@@ -17,7 +17,7 @@ public class ServerAllUsersPackage extends Package {
 
     @Override
     public String toString() {
-        return "ServerAllUsersPackage{" +
+        return "AllUsersServerPackage{" +
                 "allUsers=" + allUsers +
                 '}';
     }
