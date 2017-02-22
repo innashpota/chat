@@ -6,12 +6,15 @@ import com.shpota.chat.model.packages.AddMessageClientPackage;
 import com.shpota.chat.model.packages.RegistrationClientPackage;
 import com.shpota.chat.model.packages.RequestMessagesClientPackage;
 import com.shpota.chat.model.strategies.LoginStrategy;
-import com.shpota.chat.model.strategies.MessageStrategy;
+import com.shpota.chat.model.strategies.AddMessageStrategy;
 import com.shpota.chat.model.strategies.RegistrationStrategy;
 import com.shpota.chat.model.strategies.RequestMessagesStrategy;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Level;
+
+import static com.shpota.chat.model.Logging.LOGGER;
 
 public class ClientHandler extends Thread {
     private final Socket clientSocket;
@@ -53,18 +56,26 @@ public class ClientHandler extends Thread {
                         outputStream.writeObject(receiverStrategy.handle(selectReceiver));
                     } else if (object instanceof AddMessageClientPackage) {
                         AddMessageClientPackage message = (AddMessageClientPackage) object;
-                        MessageStrategy messageStrategy = new MessageStrategy(
+                        AddMessageStrategy addMessageStrategy = new AddMessageStrategy(
                                 chatRepository
                         );
-                        outputStream.writeObject(messageStrategy.handle(message));
+                        outputStream.writeObject(addMessageStrategy.handle(message));
                     }
                     outputStream.flush();
                 } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+                    LOGGER.log(
+                            Level.SEVERE,
+                            "ClassNotFoundException occur in ClientHandler.",
+                            e
+                    );
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(
+                    Level.SEVERE,
+                    "IOException occur in ClientHandler.",
+                    e
+            );
         }
     }
 }

@@ -1,19 +1,24 @@
 package com.shpota.chat.model.packages;
 
-public class RequestMessagesClientPackage extends Package{
-    private final String loginAuthor;
-    private final String loginDestination;
+public class RequestMessagesClientPackage extends Package {
+    private final int authorId;
+    private final int destinationId;
 
-    public RequestMessagesClientPackage(String loginAuthor, String loginDestination) {
-        this.loginAuthor = loginAuthor;
-        this.loginDestination = loginDestination;
+    public RequestMessagesClientPackage(int authorId, int destinationId) {
+        if (authorId <= 0 || destinationId <= 0) {
+            throw new IllegalArgumentException(
+                    "Author and destination must not be null."
+            );
+        }
+        this.authorId = authorId;
+        this.destinationId = destinationId;
     }
 
-    public String getLoginAuthor() {
-        return loginAuthor;
+    public int getAuthorId() {
+        return authorId;
     }
 
-    public String getLoginDestination() {
-        return loginDestination;
+    public int getDestinationId() {
+        return destinationId;
     }
 }

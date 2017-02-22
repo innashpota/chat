@@ -20,8 +20,9 @@ public class LoginStrategy implements Strategy<LoginClientPackage> {
     public Package handle(LoginClientPackage pkg) {
         String login = pkg.getLogin();
         String password = pkg.getPassword();
+        User user = chatRepository.loginUser(login, password);
 
-        if (chatRepository.loginUser(login, password) != null) {
+        if (user != null) {
             List<User> users = chatRepository.getAllUsers();
 
             return new AllUsersServerPackage(users);

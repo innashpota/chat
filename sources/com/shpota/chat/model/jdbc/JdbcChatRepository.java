@@ -10,6 +10,8 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
+
 public class JdbcChatRepository implements ChatRepository {
     private static final String SQL_INSERT_USER =
             "INSERT INTO users (first_name, last_name, login, password) " +
@@ -62,7 +64,7 @@ public class JdbcChatRepository implements ChatRepository {
         try (Connection connection = connectionManager.openConnection();
              PreparedStatement addStatement = connection.prepareStatement(
                      SQL_INSERT_USER,
-                     Statement.RETURN_GENERATED_KEYS
+                     RETURN_GENERATED_KEYS
              )) {
             addStatement.setString(1, user.getFirstName());
             addStatement.setString(2, user.getLastName());

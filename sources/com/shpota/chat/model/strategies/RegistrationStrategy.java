@@ -19,9 +19,9 @@ public class RegistrationStrategy implements Strategy<RegistrationClientPackage>
     @Override
     public Package handle(RegistrationClientPackage pkg) {
         String login = pkg.getLogin();
-        User sender = chatRepository.getUserByLogin(login);
+        User user = chatRepository.getUserByLogin(login);
 
-        if (sender == null) {
+        if (user == null) {
             chatRepository.addUser(new User(
                     pkg.getFirstName(),
                     pkg.getLastName(),
@@ -32,6 +32,8 @@ public class RegistrationStrategy implements Strategy<RegistrationClientPackage>
 
             return new AllUsersServerPackage(users);
         }
-        return new ErrorServerPackage("User with this login already exists");
+        return new ErrorServerPackage(
+                "User with this login already exists"
+        );
     }
 }

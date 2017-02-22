@@ -2,13 +2,12 @@ package com.shpota.chat.model;
 
 import java.io.Serializable;
 
-public class User implements Serializable{
+public class User implements Serializable {
     private String firstName, lastName, login, password;
     private int id;
 
     public User(int id, String firstName, String lastName, String login, String password) {
         this(firstName, lastName, login, password);
-
         if (id <= 0) {
             throw new IllegalArgumentException("ID must be positive.");
         }

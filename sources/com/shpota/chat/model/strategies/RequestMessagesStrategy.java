@@ -20,14 +20,11 @@ public class RequestMessagesStrategy
 
     @Override
     public Package handle(RequestMessagesClientPackage pkg) {
-        String authorLogin = pkg.getLoginAuthor();
-        User author = getUserByLogin(authorLogin);
-        String destinationLogin = pkg.getLoginDestination();
-        User destination = getUserByLogin(destinationLogin);
+        int authorId = pkg.getAuthorId();
+        int destinationId = pkg.getDestinationId();
+        User destination = chatRepository.getUser(destinationId);
 
         if (destination != null) {
-            int authorId = author.getId();
-            int destinationId = destination.getId();
             List<Message> messages = chatRepository.getMessages(
                     authorId,
                     destinationId
@@ -38,9 +35,5 @@ public class RequestMessagesStrategy
         return new ErrorServerPackage(
                 "You did not choose the recipient of the message"
         );
-    }
-
-    private User getUserByLogin(String login) {
-        return chatRepository.getUserByLogin(login);
     }
 }

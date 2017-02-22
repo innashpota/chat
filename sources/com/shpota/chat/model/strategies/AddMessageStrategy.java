@@ -6,10 +6,10 @@ import com.shpota.chat.model.packages.AddMessageClientPackage;
 import com.shpota.chat.model.packages.MessageServerPackage;
 import com.shpota.chat.model.packages.Package;
 
-public class MessageStrategy implements Strategy<AddMessageClientPackage> {
+public class AddMessageStrategy implements Strategy<AddMessageClientPackage> {
     private final ChatRepository chatRepository;
 
-    public MessageStrategy(ChatRepository chatRepository) {
+    public AddMessageStrategy(ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
 

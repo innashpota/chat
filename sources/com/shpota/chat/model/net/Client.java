@@ -6,6 +6,9 @@ import com.shpota.chat.model.packages.ErrorServerPackage;
 
 import java.net.*;
 import java.io.*;
+import java.util.logging.Level;
+
+import static com.shpota.chat.model.Logging.LOGGER;
 
 public class Client {
     private static final int SERVER_PORT = 65000;
@@ -58,7 +61,11 @@ public class Client {
                 Thread.sleep(2000);
             }
         } catch (Exception x) {
-            x.printStackTrace();
+            LOGGER.log(
+                    Level.SEVERE,
+                    "Exception occur in Client.",
+                    x
+            );
         }
     }
 }

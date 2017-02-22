@@ -14,6 +14,11 @@ public class AddMessageClientPackage extends Package {
             OffsetDateTime postedDate,
             String message
     ) {
+        if (authorId <= 0 || destinationId <=0 || postedDate == null || message == null) {
+            throw new IllegalArgumentException(
+                    "Author, destination, date and message must not be null."
+            );
+        }
         this.authorId = authorId;
         this.destinationId = destinationId;
         this.postedDate = postedDate;

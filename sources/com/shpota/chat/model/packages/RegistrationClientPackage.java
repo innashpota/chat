@@ -12,6 +12,11 @@ public class RegistrationClientPackage extends Package {
             String login,
             String password
     ) {
+        if (firstName == null || lastName == null || login == null || password == null) {
+            throw new IllegalArgumentException(
+                    "First name, last name, login and password must not be null."
+            );
+        }
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
