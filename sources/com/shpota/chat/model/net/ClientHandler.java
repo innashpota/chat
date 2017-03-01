@@ -23,20 +23,22 @@ public class ClientHandler extends Thread {
     }
 
     private Map<Class, Strategy> handleMap(ChatRepository chatRepository) {
-        RegistrationStrategy registrationStrategy = new RegistrationStrategy(
-                chatRepository
+        dispatch.put(
+                RegistrationClientPackage.class,
+                new RegistrationStrategy(chatRepository)
         );
-        dispatch.put(RegistrationClientPackage.class, registrationStrategy);
-        LoginStrategy loginStrategy = new LoginStrategy(chatRepository);
-        dispatch.put(LoginClientPackage.class, loginStrategy);
-        RequestMessagesStrategy receiverStrategy = new RequestMessagesStrategy(
-                chatRepository
+        dispatch.put(
+                LoginClientPackage.class,
+                new LoginStrategy(chatRepository)
         );
-        dispatch.put(RegistrationClientPackage.class, receiverStrategy);
-        AddMessageStrategy addMessageStrategy = new AddMessageStrategy(
-                chatRepository
+        dispatch.put(
+                RegistrationClientPackage.class,
+                new RequestMessagesStrategy(chatRepository)
         );
-        dispatch.put(AddMessageClientPackage.class, addMessageStrategy);
+        dispatch.put(
+                AddMessageClientPackage.class,
+                new AddMessageStrategy(chatRepository)
+        );
         return dispatch;
     }
 
@@ -59,7 +61,6 @@ public class ClientHandler extends Thread {
                     }
                     outputStream.flush();
                 } catch (ClassNotFoundException e) {
-
                     LOGGER.error("ClassNotFoundException occur in ClientHandler.", e);
                 }
             }
