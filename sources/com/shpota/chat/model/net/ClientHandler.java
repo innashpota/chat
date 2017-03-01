@@ -1,28 +1,43 @@
 package com.shpota.chat.model.net;
 
 import com.shpota.chat.model.ChatRepository;
-import com.shpota.chat.model.packages.LoginClientPackage;
-import com.shpota.chat.model.packages.AddMessageClientPackage;
-import com.shpota.chat.model.packages.RegistrationClientPackage;
-import com.shpota.chat.model.packages.RequestMessagesClientPackage;
-import com.shpota.chat.model.strategies.LoginStrategy;
-import com.shpota.chat.model.strategies.AddMessageStrategy;
-import com.shpota.chat.model.strategies.RegistrationStrategy;
-import com.shpota.chat.model.strategies.RequestMessagesStrategy;
+import com.shpota.chat.model.packages.*;
+import com.shpota.chat.model.packages.Package;
+import com.shpota.chat.model.strategies.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.logging.Level;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.shpota.chat.model.Logging.LOGGER;
+import static com.shpota.chat.model.net.Server.LOGGER;
 
 public class ClientHandler extends Thread {
+    private final Map<Class, Strategy> dispatch = new HashMap<Class, Strategy>();
     private final Socket clientSocket;
     private final ChatRepository chatRepository;
 
     public ClientHandler(Socket clientSocket, ChatRepository chatRepository) {
         this.clientSocket = clientSocket;
         this.chatRepository = chatRepository;
+    }
+
+    private Map<Class, Strategy> handleMap(ChatRepository chatRepository) {
+        RegistrationStrategy registrationStrategy = new RegistrationStrategy(
+                chatRepository
+        );
+        dispatch.put(RegistrationClientPackage.class, registrationStrategy);
+        LoginStrategy loginStrategy = new LoginStrategy(chatRepository);
+        dispatch.put(LoginClientPackage.class, loginStrategy);
+        RequestMessagesStrategy receiverStrategy = new RequestMessagesStrategy(
+                chatRepository
+        );
+        dispatch.put(RegistrationClientPackage.class, receiverStrategy);
+        AddMessageStrategy addMessageStrategy = new AddMessageStrategy(
+                chatRepository
+        );
+        dispatch.put(AddMessageClientPackage.class, addMessageStrategy);
+        return dispatch;
     }
 
     @Override
@@ -38,44 +53,18 @@ public class ClientHandler extends Thread {
             while (true) {
                 try {
                     Object object = inputStream.readObject();
-                    if (object instanceof RegistrationClientPackage) {
-                        RegistrationClientPackage registration =
-                                (RegistrationClientPackage) object;
-                        RegistrationStrategy registrationStrategy =
-                                new RegistrationStrategy(chatRepository);
-                        outputStream.writeObject(registrationStrategy.handle(registration));
-                    } else if (object instanceof LoginClientPackage) {
-                        LoginClientPackage login = (LoginClientPackage) object;
-                        LoginStrategy loginStrategy = new LoginStrategy(chatRepository);
-                        outputStream.writeObject(loginStrategy.handle(login));
-                    } else if (object instanceof RequestMessagesClientPackage) {
-                        RequestMessagesClientPackage selectReceiver =
-                                (RequestMessagesClientPackage) object;
-                        RequestMessagesStrategy receiverStrategy =
-                                new RequestMessagesStrategy(chatRepository);
-                        outputStream.writeObject(receiverStrategy.handle(selectReceiver));
-                    } else if (object instanceof AddMessageClientPackage) {
-                        AddMessageClientPackage message = (AddMessageClientPackage) object;
-                        AddMessageStrategy addMessageStrategy = new AddMessageStrategy(
-                                chatRepository
-                        );
-                        outputStream.writeObject(addMessageStrategy.handle(message));
+                    Strategy strategy = handleMap(chatRepository).get(object.getClass());
+                    if (strategy != null) {
+                        outputStream.writeObject(strategy.handle((Package) object));
                     }
                     outputStream.flush();
                 } catch (ClassNotFoundException e) {
-                    LOGGER.log(
-                            Level.SEVERE,
-                            "ClassNotFoundException occur in ClientHandler.",
-                            e
-                    );
+
+                    LOGGER.error("ClassNotFoundException occur in ClientHandler.", e);
                 }
             }
         } catch (IOException e) {
-            LOGGER.log(
-                    Level.SEVERE,
-                    "IOException occur in ClientHandler.",
-                    e
-            );
+            LOGGER.error("IOException occur in ClientHandler.", e);
         }
     }
 }
