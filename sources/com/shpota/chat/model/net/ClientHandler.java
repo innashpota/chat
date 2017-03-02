@@ -1,45 +1,21 @@
 package com.shpota.chat.model.net;
 
-import com.shpota.chat.model.ChatRepository;
-import com.shpota.chat.model.packages.*;
 import com.shpota.chat.model.packages.Package;
 import com.shpota.chat.model.strategies.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.shpota.chat.model.net.Server.LOGGER;
 
 public class ClientHandler extends Thread {
-    private final Map<Class, Strategy> dispatch = new HashMap<Class, Strategy>();
     private final Socket clientSocket;
-    private final ChatRepository chatRepository;
+    private final Map<Class, Strategy> dispatch;
 
-    public ClientHandler(Socket clientSocket, ChatRepository chatRepository) {
+    public ClientHandler(Socket clientSocket, Map<Class, Strategy> dispatch) {
         this.clientSocket = clientSocket;
-        this.chatRepository = chatRepository;
-    }
-
-    private Map<Class, Strategy> handleMap(ChatRepository chatRepository) {
-        dispatch.put(
-                RegistrationClientPackage.class,
-                new RegistrationStrategy(chatRepository)
-        );
-        dispatch.put(
-                LoginClientPackage.class,
-                new LoginStrategy(chatRepository)
-        );
-        dispatch.put(
-                RegistrationClientPackage.class,
-                new RequestMessagesStrategy(chatRepository)
-        );
-        dispatch.put(
-                AddMessageClientPackage.class,
-                new AddMessageStrategy(chatRepository)
-        );
-        return dispatch;
+        this.dispatch = dispatch;
     }
 
     @Override
@@ -55,7 +31,7 @@ public class ClientHandler extends Thread {
             while (true) {
                 try {
                     Object object = inputStream.readObject();
-                    Strategy strategy = handleMap(chatRepository).get(object.getClass());
+                    Strategy strategy = dispatch.get(object.getClass());
                     if (strategy != null) {
                         outputStream.writeObject(strategy.handle((Package) object));
                     }
