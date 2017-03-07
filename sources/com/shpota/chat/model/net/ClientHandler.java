@@ -1,21 +1,22 @@
 package com.shpota.chat.model.net;
 
+import com.shpota.chat.model.PackageFactory;
+import com.shpota.chat.model.jdbc.JdbcChatRepository;
 import com.shpota.chat.model.packages.Package;
 import com.shpota.chat.model.strategies.*;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Map;
 
 import static com.shpota.chat.model.net.Server.LOGGER;
 
 public class ClientHandler extends Thread {
     private final Socket clientSocket;
-    private final Map<Class, Strategy> dispatch;
+    private final JdbcChatRepository chatRepository;
 
-    public ClientHandler(Socket clientSocket, Map<Class, Strategy> dispatch) {
+    public ClientHandler(Socket clientSocket, JdbcChatRepository chatRepository) {
         this.clientSocket = clientSocket;
-        this.dispatch = dispatch;
+        this.chatRepository = chatRepository;
     }
 
     @Override
@@ -31,7 +32,10 @@ public class ClientHandler extends Thread {
             while (true) {
                 try {
                     Object object = inputStream.readObject();
-                    Strategy strategy = dispatch.get(object.getClass());
+                    Strategy strategy = new PackageFactory().getStrategy(
+                            object.getClass(),
+                            chatRepository
+                    );
                     if (strategy != null) {
                         outputStream.writeObject(strategy.handle((Package) object));
                     }

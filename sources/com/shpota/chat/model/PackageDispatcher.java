@@ -8,15 +8,15 @@ import com.shpota.chat.model.strategies.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DispatchMap {
-    private final Map<Class, Strategy> dispatch = new HashMap<>();
-    private final ChatRepository chatRepository;
+public class PackageDispatcher {
+    public Map<Class, Strategy> map;
 
-    public DispatchMap(ChatRepository chatRepository) {
-        this.chatRepository = chatRepository;
+    private PackageDispatcher(Map<Class, Strategy> map) {
+        this.map = map;
     }
 
-    public Map<Class, Strategy> handle() {
+    public static PackageDispatcher getInstance(ChatRepository chatRepository) {
+        Map<Class, Strategy> dispatch = new HashMap<>();
         dispatch.put(
                 RegistrationClientPackage.class,
                 new RegistrationStrategy(chatRepository)
@@ -33,6 +33,6 @@ public class DispatchMap {
                 AddMessageClientPackage.class,
                 new AddMessageStrategy(chatRepository)
         );
-        return dispatch;
+        return new PackageDispatcher(dispatch);
     }
 }
