@@ -4,13 +4,13 @@ import java.time.OffsetDateTime;
 
 public class Message {
     private int messageId;
-    private int authorID;
-    private int destinationID;
+    private int authorId;
+    private int destinationId;
     private OffsetDateTime postedDate;
     private String message;
 
-    public Message(int messageId, int authorID, int destinationID, OffsetDateTime postedDate, String message) {
-        this(authorID, destinationID, postedDate, message);
+    public Message(int messageId, int authorId, int destinationId, OffsetDateTime postedDate, String message) {
+        this(authorId, destinationId, postedDate, message);
 
         if (messageId <= 0) {
             throw new IllegalArgumentException("ID must be positive.");
@@ -18,14 +18,14 @@ public class Message {
         this.messageId = messageId;
     }
 
-    public Message(int authorID, int destinationID, OffsetDateTime postedDate, String message) {
-        if (authorID <= 0 || destinationID <= 0 || postedDate == null || message == null) {
+    public Message(int authorId, int destinationId, OffsetDateTime postedDate, String message) {
+        if (authorId <= 0 || destinationId <= 0 || postedDate == null || message == null) {
             throw new IllegalArgumentException(
                     "Author, destination, date and message must not be null."
             );
         }
-        this.authorID = authorID;
-        this.destinationID = destinationID;
+        this.authorId = authorId;
+        this.destinationId = destinationId;
         this.postedDate = postedDate;
         this.message = message;
     }
@@ -34,26 +34,26 @@ public class Message {
         return messageId;
     }
 
-    public void setAuthorID(int authorID) {
-        if (authorID <= 0) {
+    public void setAuthorId(int authorId) {
+        if (authorId <= 0) {
             throw new IllegalArgumentException("ID must be positive.");
         }
-        this.authorID = authorID;
+        this.authorId = authorId;
     }
 
-    public int getAuthorID() {
-        return authorID;
+    public int getAuthorId() {
+        return authorId;
     }
 
-    public void setDestinationID(int destinationID) {
-        if (destinationID <= 0) {
+    public void setDestinationId(int destinationId) {
+        if (destinationId <= 0) {
             throw new IllegalArgumentException("ID must be positive.");
         }
-        this.destinationID = destinationID;
+        this.destinationId = destinationId;
     }
 
-    public int getDestinationID() {
-        return destinationID;
+    public int getDestinationId() {
+        return destinationId;
     }
 
     public void setPostedDate(OffsetDateTime postedDate) {
@@ -89,9 +89,9 @@ public class Message {
 
         if (messageId != message1.messageId)
             return false;
-        if (authorID != message1.authorID)
+        if (authorId != message1.authorId)
             return false;
-        if (destinationID != message1.destinationID)
+        if (destinationId != message1.destinationId)
             return false;
         if (!postedDate.equals(message1.postedDate))
             return false;
@@ -101,8 +101,8 @@ public class Message {
     @Override
     public int hashCode() {
         int result = messageId;
-        result = 31 * result + authorID;
-        result = 31 * result + destinationID;
+        result = 31 * result + authorId;
+        result = 31 * result + destinationId;
         result = 31 * result + postedDate.hashCode();
         result = 31 * result + message.hashCode();
         return result;
@@ -112,8 +112,8 @@ public class Message {
     public String toString() {
         return "Message{" +
                 "messageId=" + messageId +
-                ", authorID=" + authorID +
-                ", destinationID=" + destinationID +
+                ", authorId=" + authorId +
+                ", destinationId=" + destinationId +
                 ", postedDate=" + postedDate +
                 ", message='" + message + '\'' +
                 '}';

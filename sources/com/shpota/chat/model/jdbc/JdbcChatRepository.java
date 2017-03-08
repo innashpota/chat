@@ -7,10 +7,10 @@ import com.shpota.chat.model.exceptions.RepositoryException;
 
 import java.sql.*;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class JdbcChatRepository implements ChatRepository {
     private static final String SQL_INSERT_USER =
@@ -41,6 +41,11 @@ public class JdbcChatRepository implements ChatRepository {
                     "FROM users " +
                     "ORDER BY user_id;";
 
+    private static final String SQL_SELECT_USER_BY_LOGIN =
+            "SELECT * " +
+                    "FROM users " +
+                    "WHERE login = ?;";
+
     private static final String SQL_ADD_MESSAGE =
             "INSERT INTO message (author_id, destination_id, posted_date, message_text) " +
                     "VALUES (?, ?, ?, ?);";
@@ -57,8 +62,10 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public int addUser(User user) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement addStatement =
-                     connection.prepareStatement(SQL_INSERT_USER, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement addStatement = connection.prepareStatement(
+                     SQL_INSERT_USER,
+                     RETURN_GENERATED_KEYS
+             )) {
             addStatement.setString(1, user.getFirstName());
             addStatement.setString(2, user.getLastName());
             addStatement.setString(3, user.getLogin());
@@ -79,8 +86,9 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public void deleteUser(int userId) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement deleteStatement =
-                     connection.prepareStatement(SQL_DELETE_USER)) {
+             PreparedStatement deleteStatement = connection.prepareStatement(
+                     SQL_DELETE_USER
+             )) {
             deleteStatement.setInt(1, userId);
             deleteStatement.executeUpdate();
         } catch (SQLException e) {
@@ -91,8 +99,9 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public void updateUser(int userId, User user) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement updateStatement =
-                     connection.prepareStatement(SQL_UPDATE_USER)) {
+             PreparedStatement updateStatement = connection.prepareStatement(
+                     SQL_UPDATE_USER
+             )) {
             updateStatement.setString(1, user.getFirstName());
             updateStatement.setString(2, user.getLastName());
             updateStatement.setString(3, user.getPassword());
@@ -106,8 +115,9 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public User loginUser(String login, String password) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement loginStatement =
-                     connection.prepareStatement(SQL_SELECT_LOGIN_USER)) {
+             PreparedStatement loginStatement = connection.prepareStatement(
+                     SQL_SELECT_LOGIN_USER
+             )) {
             loginStatement.setString(1, login);
             loginStatement.setString(2, password);
             try (ResultSet resultSet = loginStatement.executeQuery()) {
@@ -131,7 +141,9 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public User getUser(int userId) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement selectStatement = connection.prepareStatement(SQL_SELECT_USER)) {
+             PreparedStatement selectStatement = connection.prepareStatement(
+                     SQL_SELECT_USER
+             )) {
             selectStatement.setInt(1, userId);
             try (ResultSet resultSet = selectStatement.executeQuery()) {
                 User user = null;
@@ -154,8 +166,9 @@ public class JdbcChatRepository implements ChatRepository {
     @Override
     public List<User> getAllUsers() {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement allUsersStatement =
-                     connection.prepareStatement(SQL_SELECT_ALL_USERS)) {
+             PreparedStatement allUsersStatement = connection.prepareStatement(
+                     SQL_SELECT_ALL_USERS
+             )) {
             try (ResultSet resultSet = allUsersStatement.executeQuery()) {
                 List<User> usersList = new ArrayList<>();
                 while (resultSet.next()) {
@@ -175,12 +188,38 @@ public class JdbcChatRepository implements ChatRepository {
     }
 
     @Override
+    public User getUserByLogin(String login) {
+        try (Connection connection = connectionManager.openConnection();
+             PreparedStatement getUserByLoginStatement = connection.prepareStatement(
+                     SQL_SELECT_USER_BY_LOGIN
+             )) {
+            getUserByLoginStatement.setString(1, login);
+            try (ResultSet resultSet = getUserByLoginStatement.executeQuery()) {
+                User user = null;
+                while (resultSet.next()) {
+                    user = new User(
+                            resultSet.getInt("user_id"),
+                            resultSet.getString("first_name"),
+                            resultSet.getString("last_name"),
+                            login,
+                            resultSet.getString("password")
+                    );
+                }
+                return user;
+            }
+        } catch (SQLException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
     public void addMessage(Message message) {
         try (Connection connection = connectionManager.openConnection();
-             PreparedStatement addMessageStatement =
-                     connection.prepareStatement(SQL_ADD_MESSAGE)) {
-            addMessageStatement.setInt(1, message.getAuthorID());
-            addMessageStatement.setInt(2, message.getDestinationID());
+             PreparedStatement addMessageStatement = connection.prepareStatement(
+                     SQL_ADD_MESSAGE
+             )) {
+            addMessageStatement.setInt(1, message.getAuthorId());
+            addMessageStatement.setInt(2, message.getDestinationId());
             addMessageStatement.setObject(3, message.getPostedDate());
             addMessageStatement.setString(4, message.getMessage());
             addMessageStatement.executeUpdate();

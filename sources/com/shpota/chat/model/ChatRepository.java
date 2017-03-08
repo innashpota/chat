@@ -16,6 +16,8 @@ public interface ChatRepository {
 
     List<User> getAllUsers();
 
+    User getUserByLogin(String login);
+
     void addMessage(Message message);
 
     List<Message> getMessages(int firstId, int secondId);

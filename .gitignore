@@ -8,3 +8,6 @@ chat.iml
 build/
 
 scripts/data.sql
+/logging.log
+/logging.log.lck
+/out/
