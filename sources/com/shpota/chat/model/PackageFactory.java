@@ -10,7 +10,7 @@ public class PackageFactory {
             Class packageClass,
             JdbcChatRepository chatRepository
     ) {
-        PackageDispatcher dispatcher = PackageDispatcher.getInstance(chatRepository);
+        PackageDispatcher dispatcher = PackageDispatcher.construct(chatRepository);
         Map<Class, Strategy> map = dispatcher.map;
 
         return map.get(packageClass);
