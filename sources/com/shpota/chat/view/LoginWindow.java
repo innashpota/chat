@@ -11,7 +11,7 @@ public class LoginWindow {
     public static final String IMAGE_PATH = "/images/icon.png";
     private JFrame frame;
 
-    public void createLoginWindow() {
+    public void show() {
         createFrame();
         showView();
     }
