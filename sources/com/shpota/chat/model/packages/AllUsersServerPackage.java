@@ -14,11 +14,4 @@ public class AllUsersServerPackage extends Package {
     public List<User> getAllUsers() {
         return allUsers;
     }
-
-    @Override
-    public String toString() {
-        return "AllUsersServerPackage{" +
-                "allUsers=" + allUsers +
-                '}';
-    }
 }

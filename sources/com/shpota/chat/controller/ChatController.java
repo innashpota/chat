@@ -1,10 +1,15 @@
 package com.shpota.chat.controller;
 
-import com.shpota.chat.view.LoginWindow;
+import com.shpota.chat.model.net.ClientModel;
+import com.shpota.chat.view.LoginWindowView;
 
 public class ChatController {
     public static void main(String[] args) {
-        LoginWindow loginWindow = new LoginWindow();
-        loginWindow.show();
+        showView();
+    }
+
+    private static void showView() {
+        LoginWindowView loginWindowView = new LoginWindowView(new ClientModel());
+        loginWindowView.show();
     }
 }
