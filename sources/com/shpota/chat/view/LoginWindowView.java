@@ -8,8 +8,12 @@ import com.shpota.chat.model.packages.Package;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Arrays;
 
+import static com.shpota.chat.model.net.Server.LOGGER;
 import static java.awt.Toolkit.getDefaultToolkit;
 import static java.util.stream.Collectors.*;
 import static javax.swing.Box.*;
@@ -76,11 +80,7 @@ public class LoginWindowView extends View {
     private Box createButtonBox() {
         Box buttonBox = createHorizontalBox();
         JButton loginButton = new JButton("Login");
-        loginButton.addActionListener(actionEvent -> {
-            String login = loginField.getText();
-            String password = String.valueOf(passwordField.getPassword());
-            model.login(login, password);
-        });
+        loginButton.addActionListener(new LoginActionListener());
         JButton registrationButton = new JButton("Registration");
         buttonBox.add(createHorizontalGlue());
         buttonBox.add(loginButton);
@@ -91,7 +91,7 @@ public class LoginWindowView extends View {
 
     private Box errorMessageBox() {
         Box errorMessageBox = createHorizontalBox();
-        errorLabel = new JLabel(toHtmlRedErrorMessage(
+        errorLabel = new JLabel(toHtmlErrorMessage(
                 "The login or password number you’ve",
                 "entered doesn’t match any account."
         ));
@@ -100,7 +100,7 @@ public class LoginWindowView extends View {
         return errorMessageBox;
     }
 
-    private String toHtmlRedErrorMessage(String... messages) {
+    private String toHtmlErrorMessage(String... messages) {
         String str = Arrays.stream(messages).collect(joining("<br>"));
         return "<html><font color = red><i>" + str + "</i></font></html>";
     }
@@ -116,8 +116,24 @@ public class LoginWindowView extends View {
         if (pkg instanceof AllUsersServerPackage) {
             frame.setVisible(false);
         } else if (pkg instanceof ErrorServerPackage) {
-            new LoginWindowView(model);
             errorLabel.setVisible(true);
+        }
+    }
+
+    private class LoginActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            String login = loginField.getText();
+            String password = String.valueOf(passwordField.getPassword());
+            if ("".equals(login) || "".equals(password)) {
+                errorLabel.setVisible(true);
+            } else {
+                try {
+                    model.login(login, password);
+                } catch (IOException e) {
+                    LOGGER.error("IOException occur in LoginWindowView.", e);
+                }
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ import java.io.*;
 
 import org.apache.log4j.Logger;
 
-import static com.shpota.chat.model.net.ClientModel.SERVER_PORT;
+import static com.shpota.chat.controller.ChatController.SERVER_PORT;
 
 public class Server {
     public final static Logger LOGGER = Logger.getLogger(Server.class.getName());
@@ -19,7 +19,6 @@ public class Server {
 
     private void serve() throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
-            LOGGER.info("Waiting for a client...");
             JdbcChatRepository chatRepository = new JdbcChatRepository();
 
             while (true) {

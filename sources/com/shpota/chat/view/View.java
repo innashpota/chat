@@ -6,7 +6,7 @@ import com.shpota.chat.model.packages.Package;
 public abstract class View {
     public ClientModel model;
 
-    public View(ClientModel model) {
+    View(ClientModel model) {
         this.model = model;
         model.addView(this);
     }
