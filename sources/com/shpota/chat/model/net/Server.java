@@ -11,14 +11,18 @@ import static com.shpota.chat.controller.ChatController.SERVER_PORT;
 
 public class Server {
     public final static Logger LOGGER = Logger.getLogger(Server.class.getName());
+    private int port;
 
+    public Server(int port) {
+        this.port = port;
+    }
     public static void main(String[] args) throws IOException {
-        Server server = new Server();
+        Server server = new Server(SERVER_PORT);
         server.serve();
     }
 
     private void serve() throws IOException {
-        try (ServerSocket serverSocket = new ServerSocket(SERVER_PORT)) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             JdbcChatRepository chatRepository = new JdbcChatRepository();
 
             while (true) {

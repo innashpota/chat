@@ -37,7 +37,8 @@ public class ClientHandler extends Thread {
                             chatRepository
                     );
                     if (strategy != null) {
-                        outputStream.writeObject(strategy.handle((Package) object));
+                        Package pkg = strategy.handle((Package) object);
+                        outputStream.writeObject(pkg);
                     }
                     outputStream.flush();
                 } catch (ClassNotFoundException e) {

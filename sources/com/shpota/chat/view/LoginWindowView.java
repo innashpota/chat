@@ -20,7 +20,6 @@ import static javax.swing.Box.*;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
 public class LoginWindowView extends View {
-    public static final String IMAGE_PATH = "/images/icon.png";
     private JFrame frame;
     private JTextField loginField;
     private JPasswordField passwordField;
