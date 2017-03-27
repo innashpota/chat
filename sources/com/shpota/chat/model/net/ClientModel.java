@@ -3,15 +3,16 @@ package com.shpota.chat.model.net;
 import com.shpota.chat.model.packages.LoginClientPackage;
 import com.shpota.chat.model.packages.Package;
 import com.shpota.chat.view.View;
+import org.apache.log4j.Logger;
 
-import java.net.*;
 import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.shpota.chat.model.net.Server.LOGGER;
-
 public class ClientModel {
+    private final static Logger LOGGER = Logger.getLogger(ClientModel.class);
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
     private List<View> views = new ArrayList<>();

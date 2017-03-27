@@ -2,21 +2,22 @@ package com.shpota.chat.controller;
 
 import com.shpota.chat.model.net.ClientModel;
 import com.shpota.chat.view.LoginWindowView;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
 import static com.shpota.chat.model.net.ClientModel.initialize;
-import static com.shpota.chat.model.net.Server.LOGGER;
 
 public class ChatController {
+    private final static Logger LOGGER = Logger.getLogger(ChatController.class);
     public static final int SERVER_PORT = 65000;
     private static final String ADDRESS = "localhost";//"192.168.1.102";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         try {
             showView();
-        } catch (IOException | ClassNotFoundException e) {
-            LOGGER.error("Exception occur in ChatController.", e);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("ClassNotFoundException occur in ChatController.", e);
         }
     }
 

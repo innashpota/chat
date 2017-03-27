@@ -4,22 +4,23 @@ import com.shpota.chat.model.net.ClientModel;
 import com.shpota.chat.model.packages.AllUsersServerPackage;
 import com.shpota.chat.model.packages.ErrorServerPackage;
 import com.shpota.chat.model.packages.Package;
+import org.apache.log4j.Logger;
 
+import javax.swing.Box;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static com.shpota.chat.model.net.Server.LOGGER;
-import static java.awt.Toolkit.getDefaultToolkit;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.joining;
 import static javax.swing.Box.*;
 import static javax.swing.JFrame.EXIT_ON_CLOSE;
 
 public class LoginWindowView extends View {
+    private final static Logger LOGGER = Logger.getLogger(LoginWindowView.class);
     private JFrame frame;
     private JTextField loginField;
     private JPasswordField passwordField;
@@ -27,19 +28,37 @@ public class LoginWindowView extends View {
 
     public LoginWindowView(ClientModel model) {
         super(model);
+        this.frame = createLoginFrame();
     }
 
+    @Override
     public void show() {
-        createFrame();
-        showView();
+        frame.setVisible(true);
     }
 
-    private void createFrame() {
-        frame = new JFrame("Sign up");
-        frame.setIconImage(getDefaultToolkit().getImage(getClass().getResource(IMAGE_PATH)));
+    @Override
+    public void hide() {
+        frame.setVisible(false);
+    }
+
+    @Override
+    public void onPackageReceived(Package pkg) {
+        if (pkg instanceof AllUsersServerPackage) {
+            hide();
+        } else if (pkg instanceof ErrorServerPackage) {
+            errorLabel.setVisible(true);
+        }
+    }
+
+    private JFrame createLoginFrame() {
+        JFrame frame = new JFrame("Sign up");
+        frame.setIconImage(getIconImage());
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setSize(new Dimension(800, 600));
         frame.setLocationRelativeTo(null);
         frame.setContentPane(createMainBox());
+        frame.setResizable(false);
+        return frame;
     }
 
     private Box createMainBox() {
@@ -102,21 +121,6 @@ public class LoginWindowView extends View {
     private String toHtmlErrorMessage(String... messages) {
         String str = Arrays.stream(messages).collect(joining("<br>"));
         return "<html><font color = red><i>" + str + "</i></font></html>";
-    }
-
-    private void showView() {
-        frame.setVisible(true);
-        frame.setResizable(false);
-        frame.pack();
-    }
-
-    @Override
-    public void onPackageReceived(Package pkg) {
-        if (pkg instanceof AllUsersServerPackage) {
-            frame.setVisible(false);
-        } else if (pkg instanceof ErrorServerPackage) {
-            errorLabel.setVisible(true);
-        }
     }
 
     private class LoginActionListener implements ActionListener {
