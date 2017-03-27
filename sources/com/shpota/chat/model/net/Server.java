@@ -1,5 +1,6 @@
 package com.shpota.chat.model.net;
 
+import com.shpota.chat.model.PackageDispatcher;
 import com.shpota.chat.model.jdbc.JdbcChatRepository;
 
 import java.io.IOException;
@@ -21,13 +22,13 @@ public class Server {
     }
 
     private void serve() throws IOException {
+        JdbcChatRepository chatRepository = new JdbcChatRepository();
+        PackageDispatcher pkgDispatcher = PackageDispatcher.construct(chatRepository);
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            JdbcChatRepository chatRepository = new JdbcChatRepository();
-
             while (true) {
                 Socket socket = serverSocket.accept();
 
-                ClientHandler clientHandler = new ClientHandler(socket, chatRepository);
+                ClientHandler clientHandler = new ClientHandler(socket, pkgDispatcher);
                 clientHandler.setDaemon(true);
                 clientHandler.start();
             }

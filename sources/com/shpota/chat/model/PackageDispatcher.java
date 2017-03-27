@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PackageDispatcher {
-    public final Map<Class, Strategy> map;
+    private final Map<Class, Strategy> map;
 
     private PackageDispatcher(Map<Class, Strategy> map) {
         this.map = map;
@@ -34,5 +34,9 @@ public class PackageDispatcher {
                 new AddMessageStrategy(chatRepository)
         );
         return new PackageDispatcher(dispatch);
+    }
+
+    public Strategy getStrategy(Class packageClass) {
+        return map.get(packageClass);
     }
 }

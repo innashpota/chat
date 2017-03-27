@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 import static java.util.stream.Collectors.joining;
 import static javax.swing.Box.*;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class LoginWindowView extends View {
     private final static Logger LOGGER = Logger.getLogger(LoginWindowView.class);
