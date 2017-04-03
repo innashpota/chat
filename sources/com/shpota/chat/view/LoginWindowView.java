@@ -21,7 +21,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class LoginWindowView extends View {
     private final static Logger LOGGER = Logger.getLogger(LoginWindowView.class);
-    private JFrame frame;
+    private final JFrame frame;
     private JTextField loginField;
     private JPasswordField passwordField;
     private JLabel errorLabel;
@@ -47,6 +47,8 @@ public class LoginWindowView extends View {
             hide();
         } else if (pkg instanceof ErrorServerPackage) {
             errorLabel.setVisible(true);
+        } else {
+            LOGGER.error("Unknown package: " + pkg);
         }
     }
 
