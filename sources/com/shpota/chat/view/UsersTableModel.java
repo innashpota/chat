@@ -29,9 +29,8 @@ public class UsersTableModel extends AbstractTableModel {
         if (columnIndex == 0) {
             columnTitle = "Users";
         } else {
-            throw new IllegalArgumentException("Table has only two columns.");
+            throw new IllegalArgumentException("Table has only one column.");
         }
-
         return columnTitle;
     }
 
@@ -42,7 +41,7 @@ public class UsersTableModel extends AbstractTableModel {
         if (columnIndex == 0) {
             columnValue = user.getFirstName() + " " + user.getLastName();
         } else {
-            throw new IllegalArgumentException("Table has only two columns.");
+            throw new IllegalArgumentException("Table has only one column.");
         }
         return columnValue;
     }

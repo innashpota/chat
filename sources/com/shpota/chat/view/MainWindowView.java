@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static javax.swing.Box.createVerticalBox;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -22,6 +23,7 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 public class MainWindowView extends View {
     private final static Logger LOGGER = Logger.getLogger(MainWindowView.class);
     private final JFrame frame;
+    private Box messagesBox;
 
     public MainWindowView(ClientModel model) {
         super(model);
@@ -43,12 +45,19 @@ public class MainWindowView extends View {
         if (pkg instanceof AllUsersServerPackage) {
             List<User> allUsers = ((AllUsersServerPackage) pkg).getAllUsers();
             int authorId = ((AllUsersServerPackage) pkg).getUserId();
-            frame.add(createUsersBox(allUsers, authorId));
+            Box usersBox = createUsersBox(allUsers, authorId);
+            frame.add(usersBox);
             show();
         } else if (pkg instanceof MessageServerPackage) {
             List<Message> messages = ((MessageServerPackage) pkg).getMessages();
-            Box messagesBox = createMessagesBox(messages);
+            Map<Integer, String> userMap = ((MessageServerPackage) pkg).getUserMap();
+            if (messagesBox != null) {
+                frame.getContentPane().remove(messagesBox);
+            }
+            messagesBox = createMessagesBox(messages, userMap);
             frame.add(messagesBox);
+            frame.invalidate();
+            frame.validate();
         } else {
             hide();
         }
@@ -81,10 +90,12 @@ public class MainWindowView extends View {
             public void mouseClicked(MouseEvent event) {
                 int selectedRow = usersTable.getSelectedRow();
                 int destinationId = usersTableModel.getDestinationId(selectedRow);
-                try {
-                    model.requestMessages(authorId, destinationId);
-                } catch (IOException e) {
-                    LOGGER.error("IOException occur in LoginWindowView.", e);
+                if (selectedRow != -1) {
+                    try {
+                        model.requestMessages(authorId, destinationId);
+                    } catch (IOException e) {
+                        LOGGER.error("IOException occur in LoginWindowView.", e);
+                    }
                 }
             }
         });
@@ -95,17 +106,21 @@ public class MainWindowView extends View {
         return usersScrollPane;
     }
 
-    private Box createMessagesBox(List<Message> messages) {
+    private Box createMessagesBox(List<Message> messages, Map<Integer, String> userMap) {
         Box messagesBox = createVerticalBox();
-        messagesBox.setBorder(new EmptyBorder(12, 100, 12, 12));
-        JScrollPane messagesScrollPane = createMessagesScrollPane(messages);
+        messagesBox.setBorder(new EmptyBorder(12, 300, 12, 12));
+        JScrollPane messagesScrollPane = createMessagesScrollPane(messages, userMap);
         messagesBox.add(messagesScrollPane);
         return messagesBox;
     }
 
-    private JScrollPane createMessagesScrollPane(List<Message> messages) {
-        MessagesTableModel messagesTableModel = new MessagesTableModel(messages);
+    private JScrollPane createMessagesScrollPane(List<Message> messages, Map<Integer, String> userMap) {
+        MessagesTableModel messagesTableModel = new MessagesTableModel(messages, userMap);
         JTable messagesTable = new JTable(messagesTableModel);
+        messagesTable.getColumnModel().getColumn(0).setCellRenderer(
+                new MessagesRenderer()
+        );
+        messagesTable.setShowHorizontalLines(false);
         JScrollPane messagesScrollPane = new JScrollPane(messagesTable);
         messagesScrollPane.getViewport().setBackground(messagesTable.getBackground());
         return messagesScrollPane;

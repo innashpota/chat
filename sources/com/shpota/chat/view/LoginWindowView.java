@@ -47,8 +47,6 @@ public class LoginWindowView extends View {
             hide();
         } else if (pkg instanceof ErrorServerPackage) {
             errorLabel.setVisible(true);
-        } else {
-            LOGGER.error("Unknown package: " + pkg);
         }
     }
 

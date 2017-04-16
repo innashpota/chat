@@ -1,8 +1,9 @@
 package com.shpota.chat.model;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
-public class Message {
+public class Message implements Serializable {
     private int messageId;
     private int authorId;
     private int destinationId;

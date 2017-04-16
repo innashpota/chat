@@ -7,7 +7,7 @@ public class RequestMessagesClientPackage extends Package {
     public RequestMessagesClientPackage(int authorId, int destinationId) {
         if (authorId <= 0 || destinationId <= 0) {
             throw new IllegalArgumentException(
-                    "Author and destination must not be null."
+                    "Author and destination must be positive."
             );
         }
         this.authorId = authorId;
