@@ -3,6 +3,7 @@ package com.shpota.chat.model;
 import com.shpota.chat.model.packages.AddMessageClientPackage;
 import com.shpota.chat.model.packages.LoginClientPackage;
 import com.shpota.chat.model.packages.RegistrationClientPackage;
+import com.shpota.chat.model.packages.RequestMessagesClientPackage;
 import com.shpota.chat.model.strategies.*;
 
 import java.util.HashMap;
@@ -26,7 +27,7 @@ public class PackageDispatcher {
                 new LoginStrategy(chatRepository)
         );
         dispatch.put(
-                RegistrationClientPackage.class,
+                RequestMessagesClientPackage.class,
                 new RequestMessagesStrategy(chatRepository)
         );
         dispatch.put(

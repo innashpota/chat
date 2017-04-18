@@ -21,10 +21,10 @@ import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class LoginWindowView extends View {
     private final static Logger LOGGER = Logger.getLogger(LoginWindowView.class);
-    private JFrame frame;
-    private JTextField loginField;
-    private JPasswordField passwordField;
-    private JLabel errorLabel;
+    private final JFrame frame;
+    private final JTextField loginField = new JTextField(20);
+    private final JPasswordField passwordField = new JPasswordField(20);
+    private final JLabel errorLabel = new JLabel();
 
     public LoginWindowView(ClientModel model) {
         super(model);
@@ -78,7 +78,6 @@ public class LoginWindowView extends View {
     private Box createLoginBox() {
         Box loginBox = createHorizontalBox();
         JLabel loginLabel = new JLabel("Login");
-        loginField = new JTextField(20);
         loginBox.add(loginLabel);
         loginBox.add(createHorizontalStrut(32));
         loginBox.add(loginField);
@@ -88,7 +87,6 @@ public class LoginWindowView extends View {
     private Box createPasswordBox() {
         Box passwordBox = createHorizontalBox();
         JLabel passwordLabel = new JLabel("Password");
-        passwordField = new JPasswordField(20);
         passwordBox.add(passwordLabel);
         passwordBox.add(createHorizontalStrut(6));
         passwordBox.add(passwordField);
@@ -109,7 +107,7 @@ public class LoginWindowView extends View {
 
     private Box errorMessageBox() {
         Box errorMessageBox = createHorizontalBox();
-        errorLabel = new JLabel(toHtmlErrorMessage(
+        errorLabel.setText(toHtmlErrorMessage(
                 "The login or password number you’ve",
                 "entered doesn’t match any account."
         ));

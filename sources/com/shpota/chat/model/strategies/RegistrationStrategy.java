@@ -29,8 +29,9 @@ public class RegistrationStrategy implements Strategy<RegistrationClientPackage>
                     pkg.getPassword()
             ));
             List<User> users = chatRepository.getAllUsers();
+            int userId = user.getId();//перевірити
 
-            return new AllUsersServerPackage(users);
+            return new AllUsersServerPackage(userId, users);
         }
         return new ErrorServerPackage(
                 "User with this login already exists"

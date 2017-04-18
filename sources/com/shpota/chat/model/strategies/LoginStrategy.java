@@ -24,8 +24,9 @@ public class LoginStrategy implements Strategy<LoginClientPackage> {
 
         if (user != null) {
             List<User> users = chatRepository.getAllUsers();
+            int userId = user.getId();
 
-            return new AllUsersServerPackage(users);
+            return new AllUsersServerPackage(userId, users);
         }
         return new ErrorServerPackage(
                 "The login or password you entered is incorrect"

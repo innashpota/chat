@@ -2,6 +2,7 @@ package com.shpota.chat.controller;
 
 import com.shpota.chat.model.net.ClientModel;
 import com.shpota.chat.view.LoginWindowView;
+import com.shpota.chat.view.MainWindowView;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ public class ChatController {
     private static void showView() throws IOException, ClassNotFoundException {
         ClientModel model = initialize(SERVER_PORT, ADDRESS);
         LoginWindowView loginWindowView = new LoginWindowView(model);
+        MainWindowView mainWindowView = new MainWindowView(model);
         loginWindowView.show();
         model.serve();
     }
