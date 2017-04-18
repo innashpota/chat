@@ -10,11 +10,16 @@ import java.util.Map;
 public class MessagesTableModel extends AbstractTableModel {
     private static final DateTimeFormatter DATE_FORMAT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private List<Message> messages;
-    private Map<Integer, String> userMap;
+    private final List<Message> messages;
+    private final Map<Integer, String> userMap;
 
     public MessagesTableModel(List<Message> messages, Map<Integer, String> userMap) {
         super();
+        if (messages == null || userMap == null) {
+            throw new IllegalArgumentException(
+                    "List messages, author and destination must not be null."
+            );
+        }
         this.messages = messages;
         this.userMap = userMap;
     }
@@ -31,29 +36,23 @@ public class MessagesTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int columnIndex) {
-        String columnTitle;
-        if (columnIndex == 0) {
-            columnTitle = "Messages";
-        } else {
+        if (columnIndex != 0) {
             throw new IllegalArgumentException("Table has only one column.");
         }
-        return columnTitle;
+        return "Messages";
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Message message = messages.get(rowIndex);
-        String columnValue;
-        if (columnIndex == 0) {
-            columnValue = toHtmlMessage(
-                    userMap.get(message.getAuthorId()),
-                    message.getMessage(),
-                    message.getPostedDate().format(DATE_FORMAT)
-            );
-        } else {
+        if (columnIndex != 0) {
             throw new IllegalArgumentException("Table has only one column.");
         }
-        return columnValue;
+        Message message = messages.get(rowIndex);
+        return toHtmlMessage(
+                userMap.get(message.getAuthorId()),
+                message.getMessage(),
+                message.getPostedDate().format(DATE_FORMAT)
+        );
     }
 
     private String toHtmlMessage(String author, String message, String date) {

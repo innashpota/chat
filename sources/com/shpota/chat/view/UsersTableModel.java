@@ -6,10 +6,13 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class UsersTableModel extends AbstractTableModel {
-    private List<User> allUsers;
+    private final List<User> allUsers;
 
     public UsersTableModel(List<User> allUsers) {
         super();
+        if (allUsers == null) {
+            throw new IllegalArgumentException("List users must not be null.");
+        }
         this.allUsers = allUsers;
     }
 
@@ -25,28 +28,25 @@ public class UsersTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int columnIndex) {
-        String columnTitle;
-        if (columnIndex == 0) {
-            columnTitle = "Users";
-        } else {
+        if (columnIndex != 0) {
             throw new IllegalArgumentException("Table has only one column.");
         }
-        return columnTitle;
+        return "Users";
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        User user = allUsers.get(rowIndex);
-        String columnValue;
-        if (columnIndex == 0) {
-            columnValue = user.getFirstName() + " " + user.getLastName();
-        } else {
+        if (columnIndex != 0) {
             throw new IllegalArgumentException("Table has only one column.");
         }
-        return columnValue;
+        User user = allUsers.get(rowIndex);
+        return user.getFirstName() + " " + user.getLastName();
     }
 
     public int getDestinationId(int index) {
+        if (index <= 0) {
+            throw new IllegalArgumentException("Index must be positive.");
+        }
         User user = allUsers.get(index);
         return user.getId();
     }

@@ -25,8 +25,8 @@ public class ChatController {
     private static void showView() throws IOException, ClassNotFoundException {
         ClientModel model = initialize(SERVER_PORT, ADDRESS);
         LoginWindowView loginWindowView = new LoginWindowView(model);
-        loginWindowView.show();
         MainWindowView mainWindowView = new MainWindowView(model);
+        loginWindowView.show();
         model.serve();
     }
 }
