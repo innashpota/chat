@@ -31,7 +31,7 @@ public class UsersTableModel extends AbstractTableModel {
         if (columnIndex != 0) {
             throw new IllegalArgumentException("Table has only one column.");
         }
-        return "Users";
+        return "Contacts";
     }
 
     @Override
