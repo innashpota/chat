@@ -11,19 +11,26 @@ import org.apache.log4j.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 
+import static javax.swing.Box.createHorizontalBox;
 import static javax.swing.Box.createVerticalBox;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 public class MainWindowView extends View {
     private final static Logger LOGGER = Logger.getLogger(MainWindowView.class);
     private final JFrame frame;
+    private final JTextArea newMessageArea = new JTextArea();
     private Box messagesBox;
+    private int authorId;
+    private int destinationId;
 
     public MainWindowView(ClientModel model) {
         super(model);
@@ -44,7 +51,7 @@ public class MainWindowView extends View {
     public void onPackageReceived(Package pkg) {
         if (pkg instanceof AllUsersServerPackage) {
             List<User> allUsers = ((AllUsersServerPackage) pkg).getAllUsers();
-            int authorId = ((AllUsersServerPackage) pkg).getUserId();
+            authorId = ((AllUsersServerPackage) pkg).getUserId();
             Box usersBox = createUsersBox(allUsers, authorId);
             frame.add(usersBox);
             show();
@@ -89,7 +96,7 @@ public class MainWindowView extends View {
             @Override
             public void mouseClicked(MouseEvent event) {
                 int selectedRow = usersTable.getSelectedRow();
-                int destinationId = usersTableModel.getDestinationId(selectedRow);
+                destinationId = usersTableModel.getDestinationId(selectedRow);
                 if (selectedRow != -1) {
                     try {
                         model.requestMessages(authorId, destinationId);
@@ -111,6 +118,7 @@ public class MainWindowView extends View {
         messagesBox.setBorder(new EmptyBorder(12, 300, 12, 12));
         JScrollPane messagesScrollPane = createMessagesScrollPane(messages, userMap);
         messagesBox.add(messagesScrollPane);
+        messagesBox.add(createNewMessageBox());
         return messagesBox;
     }
 
@@ -124,5 +132,38 @@ public class MainWindowView extends View {
         JScrollPane messagesScrollPane = new JScrollPane(messagesTable);
         messagesScrollPane.getViewport().setBackground(messagesTable.getBackground());
         return messagesScrollPane;
+    }
+
+    private Box createNewMessageBox() {
+        Box newMessageBox = createHorizontalBox();
+        newMessageBox.setBorder(new EmptyBorder(6, 0, 0, 0));
+        newMessageArea.setLineWrap(true);
+        newMessageArea.setWrapStyleWord(true);
+        newMessageBox.add(newMessageArea);
+        JButton sendButton = new JButton("Send");
+        sendButton.addActionListener(new SendActionListener());
+        newMessageBox.add(sendButton);
+        return newMessageBox;
+    }
+
+    private class SendActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            String newMessage = newMessageArea.getText();
+            OffsetDateTime postedDate = OffsetDateTime.now();
+            if (!"".equals(newMessage)) {
+                try {
+                    model.addMessage(
+                            authorId,
+                            destinationId,
+                            postedDate,
+                            newMessage
+                    );
+                    newMessageArea.setText("");
+                } catch (IOException e) {
+                    LOGGER.error("IOException occur in MainWindowView.", e);
+                }
+            }
+        }
     }
 }

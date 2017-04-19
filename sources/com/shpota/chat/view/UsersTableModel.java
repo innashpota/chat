@@ -44,7 +44,7 @@ public class UsersTableModel extends AbstractTableModel {
     }
 
     public int getDestinationId(int index) {
-        if (index <= 0) {
+        if (index < 0) {
             throw new IllegalArgumentException("Index must be positive.");
         }
         User user = allUsers.get(index);

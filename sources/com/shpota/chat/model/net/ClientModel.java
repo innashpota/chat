@@ -1,5 +1,6 @@
 package com.shpota.chat.model.net;
 
+import com.shpota.chat.model.packages.AddMessageClientPackage;
 import com.shpota.chat.model.packages.LoginClientPackage;
 import com.shpota.chat.model.packages.Package;
 import com.shpota.chat.model.packages.RequestMessagesClientPackage;
@@ -9,6 +10,7 @@ import org.apache.log4j.Logger;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +72,21 @@ public class ClientModel {
                 destinationId
         );
         outputStream.writeObject(messagesClientPackage);
+        outputStream.flush();
+    }
+
+    public void addMessage(
+            int authorId,
+            int destinationId,
+            OffsetDateTime postedDate,
+            String message) throws IOException {
+        AddMessageClientPackage addMessageClientPackage = new AddMessageClientPackage(
+                authorId,
+                destinationId,
+                postedDate,
+                message
+        );
+        outputStream.writeObject(addMessageClientPackage);
         outputStream.flush();
     }
 }
