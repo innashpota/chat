@@ -39,7 +39,7 @@ public class MessagesTableModel extends AbstractTableModel {
         if (columnIndex != 0) {
             throw new IllegalArgumentException("Table has only one column.");
         }
-        return "Messages";
+        return "Conversation";
     }
 
     @Override
