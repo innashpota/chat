@@ -13,9 +13,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.Arrays;
 
-import static java.util.stream.Collectors.joining;
 import static javax.swing.Box.*;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
@@ -25,6 +23,7 @@ public class LoginWindowView extends View {
     private final JTextField loginField = new JTextField(20);
     private final JPasswordField passwordField = new JPasswordField(20);
     private final JLabel errorLabel = new JLabel();
+    private Box loginMainBox;
 
     public LoginWindowView(ClientModel model) {
         super(model);
@@ -56,19 +55,20 @@ public class LoginWindowView extends View {
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setSize(new Dimension(800, 600));
         frame.setLocationRelativeTo(null);
-        frame.setContentPane(createMainBox());
+        loginMainBox = createLoginMainBox();
+        frame.setContentPane(loginMainBox);
         frame.setResizable(false);
         return frame;
     }
 
-    private Box createMainBox() {
+    private Box createLoginMainBox() {
         Box mainBox = createVerticalBox();
-        mainBox.setBorder(new EmptyBorder(12, 12, 12, 12));
+        mainBox.setBorder(new EmptyBorder(50, 200, 400, 200));
         mainBox.add(createLoginBox());
         mainBox.add(createVerticalStrut(12));
         mainBox.add(createPasswordBox());
         mainBox.add(createVerticalStrut(17));
-        mainBox.add(createButtonBox());
+        mainBox.add(createLoginButtonBox());
         mainBox.add(createVerticalStrut(17));
         mainBox.add(errorMessageBox());
         mainBox.add(createVerticalStrut(30));
@@ -93,11 +93,12 @@ public class LoginWindowView extends View {
         return passwordBox;
     }
 
-    private Box createButtonBox() {
+    private Box createLoginButtonBox() {
         Box buttonBox = createHorizontalBox();
         JButton loginButton = new JButton("Login");
         loginButton.addActionListener(new LoginActionListener());
         JButton registrationButton = new JButton("Registration");
+        registrationButton.addActionListener(new RegistrationActionListener());
         buttonBox.add(createHorizontalGlue());
         buttonBox.add(loginButton);
         buttonBox.add(createHorizontalStrut(12));
@@ -107,18 +108,13 @@ public class LoginWindowView extends View {
 
     private Box errorMessageBox() {
         Box errorMessageBox = createHorizontalBox();
-        errorLabel.setText(toHtmlErrorMessage(
-                "The login or password number you’ve",
-                "entered doesn’t match any account."
-        ));
         errorMessageBox.add(errorLabel);
         errorLabel.setVisible(false);
         return errorMessageBox;
     }
 
-    private String toHtmlErrorMessage(String... messages) {
-        String str = Arrays.stream(messages).collect(joining("<br>"));
-        return "<html><font color = red><i>" + str + "</i></font></html>";
+    private String toHtmlErrorMessage(String message) {
+        return "<html><font color = red><i>" + message + "</i></font></html>";
     }
 
     private class LoginActionListener implements ActionListener {
@@ -127,6 +123,10 @@ public class LoginWindowView extends View {
             String login = loginField.getText();
             String password = String.valueOf(passwordField.getPassword());
             if ("".equals(login) || "".equals(password)) {
+                errorLabel.setText(toHtmlErrorMessage(
+                        "The login or password number you’ve " +
+                                "entered doesn’t match any account."
+                ));
                 errorLabel.setVisible(true);
             } else {
                 try {
@@ -135,6 +135,15 @@ public class LoginWindowView extends View {
                     LOGGER.error("IOException occur in LoginWindowView.", e);
                 }
             }
+        }
+    }
+
+    private class RegistrationActionListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent actionEvent) {
+            loginMainBox.setVisible(false);
+            RegistrationBoxView boxView = new RegistrationBoxView(model, frame);
+            frame.setContentPane(boxView.registrationBox);
         }
     }
 }
