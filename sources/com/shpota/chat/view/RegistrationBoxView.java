@@ -17,7 +17,7 @@ import static javax.swing.Box.*;
 public class RegistrationBoxView extends View {
     private final static Logger LOGGER = Logger.getLogger(LoginWindowView.class);
     public final Box registrationBox;
-    private final JFrame frame;
+    private final JFrame loginViewFrame;
     private final JTextField firstNameField = new JTextField(20);
     private final JTextField lastNameField = new JTextField(20);
     private final JTextField loginField = new JTextField(20);
@@ -25,9 +25,9 @@ public class RegistrationBoxView extends View {
     private final JPasswordField repeatPasswordField = new JPasswordField(20);
     private final JLabel errorLabel = new JLabel();
 
-    public RegistrationBoxView(ClientModel model, JFrame frame) {
+    public RegistrationBoxView(ClientModel model, JFrame loginViewFrame) {
         super(model);
-        this.frame = frame;
+        this.loginViewFrame = loginViewFrame;
         this.registrationBox = createRegistrationBox();
     }
 
@@ -44,7 +44,7 @@ public class RegistrationBoxView extends View {
     @Override
     public void onPackageReceived(Package pkg) {
         if (pkg instanceof AllUsersServerPackage) {
-            frame.setVisible(false);
+            loginViewFrame.setVisible(false);
         }
     }
 
@@ -129,10 +129,6 @@ public class RegistrationBoxView extends View {
         return errorMessageBox;
     }
 
-    private String toHtmlErrorMessage(String message) {
-        return "<html><font color = red><i>" + message + "</i></font></html>";
-    }
-
     private class RegistrationActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -140,25 +136,19 @@ public class RegistrationBoxView extends View {
             String lastName = lastNameField.getText();
             String login = loginField.getText();
             String password = String.valueOf(passwordField.getPassword());
-            String repeatPassword = String.valueOf(
-                    repeatPasswordField.getPassword()
-            );
+            String repeatPassword = String.valueOf(repeatPasswordField.getPassword());
             if ("".equals(firstName) || "".equals(lastName)
                     || "".equals(login) || "".equals(password)) {
-                errorLabel.setText(toHtmlErrorMessage(
-                        "All fields are mandatory."
-                ));
+                errorLabel.setText(toHtmlErrorMessage("All fields are mandatory."));
                 errorLabel.setVisible(true);
             } else if (!password.equals(repeatPassword)) {
-                errorLabel.setText(toHtmlErrorMessage(
-                        "Password doesn't match."
-                ));
+                errorLabel.setText(toHtmlErrorMessage("Password doesn't match."));
                 errorLabel.setVisible(true);
             } else {
                 try {
-                    model.registration(firstName, lastName, login, password);
+                    model.register(firstName, lastName, login, password);
                 } catch (IOException e) {
-                    LOGGER.error("IOException occur in LoginWindowView.", e);
+                    LOGGER.error("IOException in LoginWindowView", e);
                 }
             }
         }

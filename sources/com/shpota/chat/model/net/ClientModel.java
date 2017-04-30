@@ -88,7 +88,7 @@ public class ClientModel {
         outputStream.flush();
     }
 
-    public void registration(
+    public void register(
             String firstName,
             String lastName,
             String login,

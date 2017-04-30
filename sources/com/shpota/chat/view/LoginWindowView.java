@@ -113,10 +113,6 @@ public class LoginWindowView extends View {
         return errorMessageBox;
     }
 
-    private String toHtmlErrorMessage(String message) {
-        return "<html><font color = red><i>" + message + "</i></font></html>";
-    }
-
     private class LoginActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -124,7 +120,7 @@ public class LoginWindowView extends View {
             String password = String.valueOf(passwordField.getPassword());
             if ("".equals(login) || "".equals(password)) {
                 errorLabel.setText(toHtmlErrorMessage(
-                        "The login or password number you’ve " +
+                        "The login or password you’ve " +
                                 "entered doesn’t match any account."
                 ));
                 errorLabel.setVisible(true);
@@ -132,7 +128,7 @@ public class LoginWindowView extends View {
                 try {
                     model.login(login, password);
                 } catch (IOException e) {
-                    LOGGER.error("IOException occur in LoginWindowView.", e);
+                    LOGGER.error("IOException in LoginWindowView", e);
                 }
             }
         }
