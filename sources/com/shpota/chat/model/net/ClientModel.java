@@ -1,9 +1,7 @@
 package com.shpota.chat.model.net;
 
-import com.shpota.chat.model.packages.AddMessageClientPackage;
-import com.shpota.chat.model.packages.LoginClientPackage;
+import com.shpota.chat.model.packages.*;
 import com.shpota.chat.model.packages.Package;
-import com.shpota.chat.model.packages.RequestMessagesClientPackage;
 import com.shpota.chat.view.View;
 import org.apache.log4j.Logger;
 
@@ -87,6 +85,22 @@ public class ClientModel {
                 message
         );
         outputStream.writeObject(addMessageClientPackage);
+        outputStream.flush();
+    }
+
+    public void register(
+            String firstName,
+            String lastName,
+            String login,
+            String password
+    ) throws IOException {
+        RegistrationClientPackage registrationClientPackage = new RegistrationClientPackage(
+                firstName,
+                lastName,
+                login,
+                password
+        );
+        outputStream.writeObject(registrationClientPackage);
         outputStream.flush();
     }
 }

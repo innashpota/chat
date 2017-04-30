@@ -40,11 +40,11 @@ public class ClientHandler extends Thread {
                     }
                     outputStream.flush();
                 } catch (ClassNotFoundException e) {
-                    LOGGER.error("ClassNotFoundException occur in ClientHandler.", e);
+                    LOGGER.error("ClassNotFoundException occurred in ClientHandler.", e);
                 }
             }
         } catch (IOException e) {
-            LOGGER.error("IOException occur in ClientHandler.", e);
+            LOGGER.error("IOException occurred in ClientHandler.", e);
         }
     }
 }

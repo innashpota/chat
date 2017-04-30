@@ -22,6 +22,10 @@ public abstract class View {
         return getDefaultToolkit().getImage(url);
     }
 
+    String toHtmlErrorMessage(String message) {
+        return "<html><font color = red><i>" + message + "</i></font></html>";
+    }
+
     public abstract void show();
 
     public abstract void hide();

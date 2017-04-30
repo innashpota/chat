@@ -18,7 +18,7 @@ public class ChatController {
         try {
             showView();
         } catch (ClassNotFoundException e) {
-            LOGGER.error("ClassNotFoundException occur in ChatController.", e);
+            LOGGER.error("ClassNotFoundException occurred in ChatController.", e);
         }
     }
 
