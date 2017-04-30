@@ -128,7 +128,7 @@ public class LoginWindowView extends View {
                 try {
                     model.login(login, password);
                 } catch (IOException e) {
-                    LOGGER.error("IOException in LoginWindowView", e);
+                    LOGGER.error("IOException occurred in LoginWindowView", e);
                 }
             }
         }

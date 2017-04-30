@@ -101,7 +101,7 @@ public class MainWindowView extends View {
                     try {
                         model.requestMessages(authorId, destinationId);
                     } catch (IOException e) {
-                        LOGGER.error("IOException occur in LoginWindowView.", e);
+                        LOGGER.error("IOException occurred in LoginWindowView.", e);
                     }
                 }
             }
@@ -153,15 +153,10 @@ public class MainWindowView extends View {
             OffsetDateTime postedDate = OffsetDateTime.now();
             if (!"".equals(newMessage)) {
                 try {
-                    model.addMessage(
-                            authorId,
-                            destinationId,
-                            postedDate,
-                            newMessage
-                    );
+                    model.addMessage(authorId, destinationId, postedDate, newMessage);
                     newMessageArea.setText("");
                 } catch (IOException e) {
-                    LOGGER.error("IOException occur in MainWindowView.", e);
+                    LOGGER.error("IOException occurred in MainWindowView.", e);
                 }
             }
         }

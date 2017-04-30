@@ -148,7 +148,7 @@ public class RegistrationBoxView extends View {
                 try {
                     model.register(firstName, lastName, login, password);
                 } catch (IOException e) {
-                    LOGGER.error("IOException in LoginWindowView", e);
+                    LOGGER.error("IOException occurred in LoginWindowView", e);
                 }
             }
         }
