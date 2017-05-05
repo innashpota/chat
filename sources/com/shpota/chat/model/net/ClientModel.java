@@ -11,12 +11,18 @@ import java.net.Socket;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientModel {
     private final static Logger LOGGER = Logger.getLogger(ClientModel.class);
+    private ScheduledMessages scheduledMessages = new ScheduledMessages();
+    private Timer time;
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
     private List<View> views = new ArrayList<>();
+    private int authorId;
+    private int destinationId;
 
     private ClientModel(ObjectOutputStream outputStream, ObjectInputStream inputStream) {
         this.outputStream = outputStream;
@@ -65,12 +71,15 @@ public class ClientModel {
     }
 
     public void requestMessages(int authorId, int destinationId) throws IOException {
-        RequestMessagesClientPackage messagesClientPackage = new RequestMessagesClientPackage(
-                authorId,
-                destinationId
-        );
-        outputStream.writeObject(messagesClientPackage);
-        outputStream.flush();
+        this.authorId = authorId;
+        this.destinationId = destinationId;
+        if (time != null) {
+            time.cancel();
+            time.purge();
+            scheduledMessages = new ScheduledMessages();
+        }
+        time = new Timer();
+        time.schedule(scheduledMessages, 0, 5000);
     }
 
     public void addMessage(
@@ -102,5 +111,24 @@ public class ClientModel {
         );
         outputStream.writeObject(registrationClientPackage);
         outputStream.flush();
+    }
+
+    private class ScheduledMessages extends TimerTask {
+        @Override
+        public void run() {
+            if (authorId > 0 && destinationId > 0) {
+                RequestMessagesClientPackage messagesClientPackage = new RequestMessagesClientPackage(
+                        authorId,
+                        destinationId
+                );
+                try {
+                    outputStream.writeObject(messagesClientPackage);
+                    outputStream.flush();
+                } catch (IOException e) {
+                    LOGGER.error("Error!" + e);
+                    System.exit(0);
+                }
+            }
+        }
     }
 }
