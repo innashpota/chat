@@ -1,0 +1,1 @@
+java -cp "lib/*;build/*" com.shpota.chat.controller.ChatController

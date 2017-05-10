@@ -9,7 +9,7 @@ import java.net.URL;
 import static java.awt.Toolkit.getDefaultToolkit;
 
 public abstract class View {
-    private static final String IMAGE_PATH = "/images/icon.png";
+    private static final String IMAGE_PATH = "/icon.png";
     public ClientModel model;
 
     View(ClientModel model) {
