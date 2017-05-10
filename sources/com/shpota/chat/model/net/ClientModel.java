@@ -11,14 +11,21 @@ import java.net.Socket;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientModel {
     private final static Logger LOGGER = Logger.getLogger(ClientModel.class);
+    private ScheduledMessages scheduledMessages = new ScheduledMessages();
+    private Timer timer = new Timer();
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
     private List<View> views = new ArrayList<>();
+    private int authorId;
+    private int destinationId;
 
     private ClientModel(ObjectOutputStream outputStream, ObjectInputStream inputStream) {
+        timer.schedule(scheduledMessages, 0, 5000);
         this.outputStream = outputStream;
         this.inputStream = inputStream;
     }
@@ -28,7 +35,6 @@ public class ClientModel {
         Socket socket = new Socket(ipAddress, port);
         OutputStream outputStream = socket.getOutputStream();
         InputStream inputStream = socket.getInputStream();
-
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
         return new ClientModel(objectOutputStream, objectInputStream);
@@ -65,6 +71,12 @@ public class ClientModel {
     }
 
     public void requestMessages(int authorId, int destinationId) throws IOException {
+        this.authorId = authorId;
+        this.destinationId = destinationId;
+        requestMessagesByCurrentUsers();
+    }
+
+    private void requestMessagesByCurrentUsers() throws IOException{
         RequestMessagesClientPackage messagesClientPackage = new RequestMessagesClientPackage(
                 authorId,
                 destinationId
@@ -102,5 +114,18 @@ public class ClientModel {
         );
         outputStream.writeObject(registrationClientPackage);
         outputStream.flush();
+    }
+
+    private class ScheduledMessages extends TimerTask {
+        @Override
+        public void run() {
+            if (authorId > 0 && destinationId > 0) {
+                try {
+                    requestMessagesByCurrentUsers();
+                } catch (IOException e) {
+                    LOGGER.error("Error!", e);
+                }
+            }
+        }
     }
 }
