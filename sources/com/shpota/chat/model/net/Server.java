@@ -27,7 +27,6 @@ public class Server {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
                 Socket socket = serverSocket.accept();
-
                 ClientHandler clientHandler = new ClientHandler(socket, pkgDispatcher);
                 clientHandler.setDaemon(true);
                 clientHandler.start();

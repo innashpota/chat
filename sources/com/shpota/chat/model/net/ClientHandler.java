@@ -20,6 +20,7 @@ public class ClientHandler extends Thread {
         this.pkgDispatcher = pkgDispatcher;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void run() {
         try (
