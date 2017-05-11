@@ -8,9 +8,9 @@ public class ConnectionManager {
 
     public Connection openConnection() throws SQLException {
         return DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/postgres",
-                "postgres",
-                "shpotasql"
+                "jdbc:postgresql://localhost:5432/chat",
+                "chat",
+                "chat"
         );
     }
 }
