@@ -11,7 +11,7 @@ import static com.shpota.chat.model.net.ClientModel.initialize;
 
 public class ChatController {
     private final static Logger LOGGER = Logger.getLogger(ChatController.class);
-    public static final int SERVER_PORT = 65000;
+    public static final int SERVER_PORT = 65213;
     private static final String ADDRESS = "localhost";//"192.168.1.102";
 
     public static void main(String[] args) throws IOException {
