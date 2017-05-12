@@ -27,7 +27,6 @@ Swing для графічного інтерфейсу та LOG4J як
 ![main-window](./samples/main-window.PNG)
 
 Для входу в додаток можна скористатися логіном і паролем вже
-існуючих користувачів _login_: *kornev*, _password_: *1* або 
-_login_: *lebedev*, _password_: *1*.
-Або ж зареєструвати свого користувача натиснувши на 
-_Registration_.
+існуючих користувачів _login_: **kornev**, _password_: **1** або 
+_login_: **lebedev**, _password_: **1**.
+Або ж зареєструвати нового користувача.
